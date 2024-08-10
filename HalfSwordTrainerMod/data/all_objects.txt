@@ -1,0 +1,1 @@
+/Game/Assets/Props/Lights/Blueprints/BP_CandleLight.BP_CandleLight_C

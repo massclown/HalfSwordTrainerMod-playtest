@@ -2,7 +2,6 @@
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Brestplate_A_T2.BP_Armor_Body_Brestplate_A_T2_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Arms/BP_Armor_Arms_Vambrace_C_T2.BP_Armor_Arms_Vambrace_C_T2_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Cuirass_C_T2.BP_Armor_Body_Cuirass_C_T2_C
-/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Armet_001_B.BP_Armor_Head_Armet_001_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Cuirass_C_T3_B.BP_Armor_Body_Cuirass_C_T3_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Arms/BP_Armor_Arms_Vambrace_C_T3_B.BP_Armor_Arms_Vambrace_C_T3_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Shoulders/BP_Armor_Shoulders_Spaulder_B_T2.BP_Armor_Shoulders_Spaulder_B_T2_C
@@ -39,6 +38,8 @@
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Barbute_B.BP_Armor_Head_Barbute_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Barbute_A.BP_Armor_Head_Barbute_A_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Armet_001.BP_Armor_Head_Armet_001_C
+/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Armet_001_B.BP_Armor_Head_Armet_001_B_C
+/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Armet_001_R.BP_Armor_Head_Armet_001_R_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Plackard_T2.BP_Armor_Body_Plackard_T2_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Cuirass_C_T3.BP_Armor_Body_Cuirass_C_T3_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Cuirass_C_T1.BP_Armor_Body_Cuirass_C_T1_C
@@ -55,6 +56,7 @@
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/BP_Armor_Hands_Gauntlets_T2.BP_Armor_Hands_Gauntlets_T2_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/BP_Armor_Hands_Gauntlets_T3B.BP_Armor_Hands_Gauntlets_T3B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/BP_Armor_Hands_Gauntlets_T3.BP_Armor_Hands_Gauntlets_T3_C
+/Game/Assets/Armor/Blueprints/Built_Armor/Metal/BP_Armor_Hands_Gauntlets_T1.BP_Armor_Hands_Gauntlets_T1_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/BP_Armor_Feet_Sabbatons_A.BP_Armor_Feet_Sabbatons_A_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/BP_Armor_Feet_Sabbatons_AB.BP_Armor_Feet_Sabbatons_AB_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Arms/BP_Armor_Arms_Vambrace_C_T3.BP_Armor_Arms_Vambrace_C_T3_C

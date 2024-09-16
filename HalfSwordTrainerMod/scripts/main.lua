@@ -1115,15 +1115,15 @@ end
 -- through the array of things we spawned ourselves.
 -- This is useful to despawn or kill all NPCs, etc.
 function ExecuteForAllNPCs(callback)
-    if cache.map['Enemy (Temp)'] then
-        local npc = cache.map['Enemy (Temp)']
---        if npc:GetArrayNum() > 0 then
---            npc:ForEach(function(Index, Elem)
-                if npc:IsValid() then
-                    Logf("Executing for NPC: %s\n", npc:GetFullName())
-                    callback(npc)
+    if cache.map['Enemies'] then
+        local npc = cache.map['Enemies']
+        if npc:GetArrayNum() > 0 then
+            npc:ForEach(function(Index, Elem)
+--                if Elem:IsValid() then
+                    Logf("Executing for NPC [%i]: %s\n", Index - 1, Elem:get():GetFullName())
+                    callback(Elem:get())
 --                end
---            end)
+            end)
         end
     end
     -- -- Then freeze the boss if we are in a boss arena and the boss is alive

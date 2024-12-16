@@ -1,4 +1,5 @@
-/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Fists.Weapon_Fists_C
+[BAD]/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Fists.Weapon_Fists_C
+[BAD]/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Feet.Weapon_Feet_C
 /Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_Falchion_Short.ModularWeaponBP_Falchion_Short_C
 /Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_Falchion_Long.ModularWeaponBP_Falchion_Long_C
 /Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_ArmingSword.ModularWeaponBP_ArmingSword_C

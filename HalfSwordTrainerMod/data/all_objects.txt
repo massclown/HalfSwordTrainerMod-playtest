@@ -1,1 +1,2 @@
-/Game/Assets/Props/Lights/Blueprints/BP_CandleLight.BP_CandleLight_C
+/Game/Assets/Props/Training/Models/BP_Prop_Training_Dummy_001.BP_Prop_Training_Dummy_001_C
+[BAD]/Game/Assets/Props/Lights/Blueprints/BP_CandleLight.BP_CandleLight_C

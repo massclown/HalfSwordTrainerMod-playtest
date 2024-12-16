@@ -398,7 +398,7 @@ function InitMyMod()
         PopulateWeaponComboBox()
         --PopulateNPCComboBox()
         --PopulateNPCTeamComboBox()
-        --PopulateObjectComboBox()
+        PopulateObjectComboBox()
 
         -- if intercepted_actors then
         --     intercepted_actors = {}
@@ -1216,17 +1216,20 @@ end
 -- Object spawning applies scaling only intended for weapons, 
 -- just for fun, if the corresponding `ScaleObjects` flag is set
 function SpawnSelectedObject()
-    local Selected_Spawn_Object = cache.ui_spawn['Selected_Spawn_Object']:ToString()
-    WeaponScaleMultiplier = cache.ui_spawn['HSTM_Slider_WeaponSize']
-    WeaponScaleX = cache.ui_spawn['HSTM_Flag_ScaleX']
-    WeaponScaleY = cache.ui_spawn['HSTM_Flag_ScaleY']
-    WeaponScaleZ = cache.ui_spawn['HSTM_Flag_ScaleZ']
+    -- local Selected_Spawn_Object = cache.ui_spawn['Selected_Spawn_Object']:ToString()
+    -- WeaponScaleMultiplier = cache.ui_spawn['HSTM_Slider_WeaponSize']
+    -- WeaponScaleX = cache.ui_spawn['HSTM_Flag_ScaleX']
+    -- WeaponScaleY = cache.ui_spawn['HSTM_Flag_ScaleY']
+    -- WeaponScaleZ = cache.ui_spawn['HSTM_Flag_ScaleZ']
 
-    ScaleObjects = cache.ui_spawn['HSTM_Flag_ScaleObjects']
+    -- ScaleObjects = cache.ui_spawn['HSTM_Flag_ScaleObjects']
 
     --Logf("Spawning object key [%s]\n", Selected_Spawn_Object)
     --    if not Selected_Spawn_Object == nil and not Selected_Spawn_Object == "" then
-    local selected_actor = all_objects[Selected_Spawn_Object]
+    --local selected_actor = all_objects[Selected_Spawn_Object]
+
+    local _, selected_actor = table.random_key_value(all_objects)
+
     Logf("Spawning object [%s]\n", selected_actor)
     -- TODO the -60 in Z offset comes from player's camera elevation, I believe?
     local thisSpawnOffset = { X = SpawnOffsetXObject, Y = 0.0, Z = -60.0 }
@@ -1454,19 +1457,21 @@ local deltaJumpCooldown = 1.0
 -- player:Jump()
 -- so we have to add impulse ourselves
 function PlayerJump()
+    local forceJump = true
+
     local curJumpTimestamp = os.clock()
     local delta = curJumpTimestamp - lastJumpTimestamp
     -- Logf("TS = %f, LJTS = %f, delta = %f\n", curJumpTimestamp, lastJumpTimestamp, delta)
     local player = GetActivePlayer()
     local mesh = player['Mesh']
 
-    if player['Fallen'] then
+    if player['Fallen'] and not forceJump then
         -- TODO what if the player is laying down? Currently we do a small boost just in case
         local jumpImpulse = 1000.0 --* GameSpeed
         mesh:AddImpulse({ X = 0.0, Y = 0.0, Z = jumpImpulse }, FName("None"), true)
     else
         -- Only jump if the last jump happened long enough ago
-        if delta >= deltaJumpCooldown then
+        if delta >= deltaJumpCooldown or forceJump then
             -- Update last successful jump timestamp
             lastJumpTimestamp = curJumpTimestamp
             -- The jump impulse value has been selected to jump high enough for a table or boss fence
@@ -1486,6 +1491,8 @@ local deltaDashCooldown = 1.0
 -- The dash moves the player horizontally in the selected direction
 -- The dash directions cannot be combined (no diagonals!)
 function PlayerDash(direction)
+    local forceDash = true
+
     local curDashTimestamp = os.clock()
     local delta = curDashTimestamp - lastDashTimestamp
     -- Logf("TS = %f, LJTS = %f, delta = %f\n", curJumpTimestamp, lastDashTimestamp, delta)
@@ -1521,7 +1528,7 @@ function PlayerDash(direction)
         0.0
     )
 
-    if player['Fallen'] then
+    if player['Fallen'] and not forceDash then
         -- TODO what if the player is laying down? Currently we do a small boost just in case
         local dashImpulse = 1000.0 --* GameSpeed
         local dashImpulseVector = maf.vec3(dashImpulse, 0.0, 0.0)
@@ -1534,7 +1541,7 @@ function PlayerDash(direction)
         mesh:AddImpulse(dashVector, FName("None"), true)
     else
         -- Only dash if the last dash happened long enough ago
-        if delta >= deltaDashCooldown then
+        if forceDash or delta >= deltaDashCooldown then
             -- Update last successful dash timestamp
             lastDashTimestamp = curDashTimestamp
             local dashImpulse = dashForces[direction] --* GameSpeed
@@ -2391,19 +2398,19 @@ function AllKeybindHooks()
         end)
     end)
 
-    RegisterKeyBind(Key.SPACE, function()
+    RegisterKeyBind(Key.NUM_FIVE, function()
         ExecuteInGameThread(function()
             PlayerJump()
         end)
     end)
     -- Also make sure we can still jump while sprinting with Shift held down
-    RegisterKeyBind(Key.SPACE, { ModifierKey.SHIFT }, function()
+    RegisterKeyBind(Key.NUM_FIVE, { ModifierKey.SHIFT }, function()
         ExecuteInGameThread(function()
             PlayerJump()
         end)
     end)
 
-    RegisterKeyBind(Key.SPACE, { ModifierKey.CONTROL }, function()
+    RegisterKeyBind(Key.NUM_FIVE, { ModifierKey.CONTROL }, function()
         ExecuteInGameThread(function()
             PlayerJump()
         end)
@@ -2565,7 +2572,7 @@ function SanityCheckAndInit()
             -- 7616 is the size of that file with LF (unix style) endings (7616 + 203 = 7819)
             -- If you download the master branch from github you get the LF, otherwise CRLF.
             if file_size ~= 7819 and file_size ~= 7616 and file_size ~= 10962 then
-                error("You are using UE4SS 3.x.x, please copy Mods\\BPModLoaderMod\\Scripts\\main.lua from UE4SS 2.5.2!")
+                Logf("You are using UE4SS 3.x.x, please copy Mods\\BPModLoaderMod\\Scripts\\main.lua from UE4SS 2.5.2!")
             end
         else
             error("BPModLoaderMod not found!")

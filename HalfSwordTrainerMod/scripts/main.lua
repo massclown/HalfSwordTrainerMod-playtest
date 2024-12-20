@@ -589,6 +589,21 @@ function HUD_UpdatePlayerStats()
 end
 
 ------------------------------------------------------------------------------
+-- Refresh stamina to 100 in a loop, 4 times per second. Exit if no cheats on.
+function SuperStamina()
+    local player = GetActivePlayer()
+    Logf("Entering stamina refresh loop...\n")
+    LoopAsync(250, function ()
+        if SuperStrength or Invulnerable then
+            player['Stamina'] = 100
+        else
+            Logf("Exiting stamina refresh loop.\n")
+            return true
+        end
+    end)
+end
+
+------------------------------------------------------------------------------
 -- We switch between standard stats and our idea of increased stats, saving the original stats
 function ToggleSuperStrength()
     -- TODO handle possession
@@ -599,6 +614,8 @@ function ToggleSuperStrength()
         savedMP = player['Muscle Power']
         player['Running Speed Rate'] = maxRSR
         player['Muscle Power'] = maxMP
+        -- Activating stamina refresher loop
+        SuperStamina()
     else
         player['Running Speed Rate'] = savedRSR
         player['Muscle Power'] = savedMP
@@ -620,6 +637,8 @@ function ToggleInvulnerability()
     if Invulnerable then
         savedRegenRate = player['Regen Rate']
         player['Regen Rate'] = maxRegenRate
+        -- Activating stamina refresher loop
+        SuperStamina()
         -- Attempt to undo some of the damage done before to the player and the body model
         -- Doesn't seem to work.
         --player['Reset Sustained Damage']()

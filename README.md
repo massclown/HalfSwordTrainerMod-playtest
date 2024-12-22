@@ -12,11 +12,13 @@ https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1
 and now all the mod files go into a `ue4ss\Mods` subfolder inside the game's folder.
 
 # Known issues and limitations
-Unfortunately there is no user interface, just use the keybinds and check the logs. 
-
-Most of the functionality from the regular trainer mod may still work.
-
-Because there is no user interface, `F1` spawns random armor and `F2` spawns random weapons. 
-Use the despawn keybind `F5` to despawn them if you don't like what you get.
-
-Jump is now bound to `Numpad 5`, as `Space` is used by the game for kicking.
+* Unfortunately **there is no user interface**, just use the [keybinds](https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#keyboard-shortcuts-of-this-mod) and check the UE4SS logs (`Ctrl+O`). 
+* Most of the functionality from the regular trainer mod may still work.
+* Because there is no user interface, `F1` spawns random armor and `F2` spawns random weapons. 
+  * Use the despawn keybind `F5` to despawn them if you don't like what you get.
+* `F3` only spawns an unarmed NPC Willie. 
+* `F4` spawns the only object present in the game files, the training dummy.
+* Jump is now bound to `Numpad 5`, as `Space` is used by the game for kicking.
+  * Jump also has been unlocked to allow infinite ragdolling.
+* Player team changes and NPC team changes are broken. 
+  * You can get your NPC teammates to attack you by changing your team, but they will keep attacking you if you change it back, etc.

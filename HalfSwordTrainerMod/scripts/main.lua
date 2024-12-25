@@ -33,6 +33,7 @@ local SpawnFrozenNPCs = false          -- we can change it, UI flag is 'HSTM_Fla
 local SlowMotionEnabled = false
 local Frozen = false
 local SuperStrength = false
+local SuperStamina = false
 
 -- Those are copies of player's (or level's) object properties
 local OGWillie = nil
@@ -590,16 +591,22 @@ end
 
 ------------------------------------------------------------------------------
 -- Refresh stamina to 100 in a loop, 4 times per second. Exit if no cheats on.
-function SuperStamina()
+function SuperStaminaLoop()
+    -- Exit if already active, allow max 1 loop of this
+    if SuperStamina then
+        return
+    end
     local player = GetActivePlayer()
     Logf("Entering stamina refresh loop...\n")
     LoopAsync(250, function ()
         if SuperStrength or Invulnerable then
             player['Stamina'] = 100
         else
+            SuperStamina = false
             Logf("Exiting stamina refresh loop.\n")
             return true
         end
+        return false
     end)
 end
 
@@ -615,7 +622,7 @@ function ToggleSuperStrength()
         player['Running Speed Rate'] = maxRSR
         player['Muscle Power'] = maxMP
         -- Activating stamina refresher loop
-        SuperStamina()
+        SuperStaminaLoop()
     else
         player['Running Speed Rate'] = savedRSR
         player['Muscle Power'] = savedMP
@@ -638,7 +645,7 @@ function ToggleInvulnerability()
         savedRegenRate = player['Regen Rate']
         player['Regen Rate'] = maxRegenRate
         -- Activating stamina refresher loop
-        SuperStamina()
+        SuperStaminaLoop()
         -- Attempt to undo some of the damage done before to the player and the body model
         -- Doesn't seem to work.
         --player['Reset Sustained Damage']()

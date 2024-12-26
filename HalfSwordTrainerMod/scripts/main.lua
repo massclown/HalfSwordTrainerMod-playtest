@@ -19,11 +19,11 @@ local HSTM_UI_ALT_HUD_TextBox_Names = {
     -- ["TextBox_Score"] = { 1, "Score : %d" },
     -- ["TextBox_Level"] = { 2, "Level : %d" },
     ["TextBox_HP"] = { 3, "HP : %d" },
-    ["TextBox_Cons"] = { 4, "Conscious : %f" },
-    ["TextBox_Tonus"] = { 5, "Tonus : %f" },
+    ["TextBox_Cons"] = { 4, "Conscious : %.2f" },
+    ["TextBox_Tonus"] = { 5, "Tonus : %.2f" },
     ["TextBox_SuperStrength"] = { 6, "SuperStrength : %s" },
     ["TextBox_Invulnerability"] = { 7, "Invulnerability : %s" },
-    ["TextBox_GameSpeed"] = { 8, "Game Speed : %f (%s)" },
+    ["TextBox_GameSpeed"] = { 8, "Game Speed : %.2f (%s)" },
     ["TextBox_NPCsFrozen"] = { 9, "NPCs Frozen : %s" },
     ["TextBox_Projectile"] = { 10, "Projectile : %s" },
     ["TextBox_Player_Team"] = { 11, "Team : %d" }
@@ -414,6 +414,7 @@ function InitMyMod()
     if lastInitTimestamp == -1 or (delta > 1) then
         if InitGameStateHookCount > 1 then
             -- Looks like a real game start attempt!
+            HSTM_UI_ALT_HUD = nil
             TempSetupCustomHUD()
         end
         globalRestartCount = globalRestartCount + 1
@@ -450,7 +451,7 @@ function InitMyMod()
             PopulateArmorComboBox()
             PopulateWeaponComboBox()
             --PopulateNPCComboBox()
-            --PopulateNPCTeamComboBox()
+            PopulateNPCTeamComboBox()
             PopulateObjectComboBox()
 
             -- if intercepted_actors then
@@ -550,11 +551,31 @@ function InitMyMod()
     lastInitTimestamp = curInitTimestamp
 end
 
+function SetSmallerFont(TextBlockHandle)
+    -- TODO not working yet due to missing StructData support in UE4SS
+    -- local oldFont = TextBlockHandle["Font"]
+    -- local luaFont = {
+    --     FontObject = oldFont.FontObject,
+    --     FontMaterial = nil,
+    --     OutlineSettings = oldFont.OutlineSettings,
+    --     TypefaceFontName = "Bold",
+    --     Size = 18.000000,
+    --     LetterSpacing = 0,
+    --     SkewAmount = 0.000000,
+    --     bForceMonospaced = false,
+    --     MonospacedWidth = 1.000000
+    -- }
+    -- TextBlockHandle:SetFont(luaFont)
+end
+
 -- This is a hopefully temporary workaround for Blueprint mod loading issues in UE 5.4.4
 -- https://github.com/UE4SS-RE/RE-UE4SS/issues/690
 -- We will have to set up UE widget classes ourselves :(
+-- Note that various sizes/styles/appearances currently cannot be set dynamically
 function TempSetupCustomHUD()
+    local myInitGameStateHookCount = InitGameStateHookCount
     if not HSTM_UI_ALT_HUD then
+        HSTM_UI_ALT_HUD_Objects = {}
         Logf("Setting up alternative HUD implementation...\n")
         local GameInstance = GetGameInstance()
         HSTM_UI_ALT_HUD = StaticConstructObject(StaticFindObject("/Script/UMG.UserWidget"), GameInstance,
@@ -572,6 +593,7 @@ function TempSetupCustomHUD()
             HSTM_UI_ALT_HUD_Objects[boxName] = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
                 verticalBox, FName(boxName))
             HSTM_UI_ALT_HUD_Objects[boxName]:SetText(FText(formats))
+            SetSmallerFont(HSTM_UI_ALT_HUD_Objects[boxName])
             verticalBox:AddChildToVerticalBox(HSTM_UI_ALT_HUD_Objects[boxName])
         end
 
@@ -591,82 +613,161 @@ function TempSetupCustomHUD()
         -- comboBoxWeapons["ItemStyle"]["TextColor"] = { R = 1.0, G = 1.0, B = 1.0, A = 1.0 }
         -- comboBoxWeapons["ItemStyle"]["SelectedTextColor"] = { R = 1.0, G = 0.0, B = 0.0, A = 1.0 }
 
-        local ArmorLogo = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
-            verticalBox, FName("Spawn_Armor_Logo"))
-        ArmorLogo:SetText(FText("Spawn Armor:"))
-        verticalBox:AddChildToVerticalBox(ArmorLogo)
+        local cobmboBoxNPCTeam = StaticConstructObject(StaticFindObject("/Script/UMG.ComboBoxString"), verticalBox,
+            FName("ComboBoxNPCTeam"))
+
+        local ArmorLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            verticalBox, FName("Spawn_Armor_Label"))
+        ArmorLabel:SetText(FText("Spawn Armor:"))
+        SetSmallerFont(ArmorLabel)
+        verticalBox:AddChildToVerticalBox(ArmorLabel)
 
         HSTM_UI_ALT_HUD_Objects["ComboBox_Armor"] = comboBoxArmor
         verticalBox:AddChildToVerticalBox(comboBoxArmor)
 
-        local WeaponLogo = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+        local WeaponLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
             verticalBox, FName("Spawn_Weapon_Logo"))
-        WeaponLogo:SetText(FText("Spawn Weapon:"))
-        verticalBox:AddChildToVerticalBox(WeaponLogo)
+        WeaponLabel:SetText(FText("Spawn Weapon:"))
+        SetSmallerFont(WeaponLabel)
+        verticalBox:AddChildToVerticalBox(WeaponLabel)
+
+        local ScaleHorizontalBox = StaticConstructObject(StaticFindObject("/Script/UMG.HorizontalBox"),
+            verticalBox, FName("ScaleHorizontalBox"))
+
+        local ScaleLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            ScaleHorizontalBox, FName("ScaleLabel"))
+        ScaleLabel:SetText(FText("Scale: %.1f "))
+        SetSmallerFont(ScaleLabel)
+        HSTM_UI_ALT_HUD_Objects["ScaleLabel"] = ScaleLabel
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleLabel)
+
+        local ScaleXLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            ScaleHorizontalBox, FName("ScaleXLabel"))
+        ScaleXLabel:SetText(FText(" X:"))
+        SetSmallerFont(ScaleXLabel)
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleXLabel)
+
+        local ScaleXCheckBox = StaticConstructObject(StaticFindObject("/Script/UMG.CheckBox"),
+            ScaleHorizontalBox, FName("ScaleXCheckBox"))
+        HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"] = ScaleXCheckBox
+        ScaleXCheckBox:SetIsChecked(true)
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleXCheckBox)
+
+        local ScaleYLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            ScaleHorizontalBox, FName("ScaleYLabel"))
+        ScaleYLabel:SetText(FText(" Y:"))
+        SetSmallerFont(ScaleYLabel)
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleYLabel)
+
+        local ScaleYCheckBox = StaticConstructObject(StaticFindObject("/Script/UMG.CheckBox"),
+            ScaleHorizontalBox, FName("ScaleYCheckBox"))
+        HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"] = ScaleYCheckBox
+        ScaleYCheckBox:SetIsChecked(true)
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleYCheckBox)
+
+        local ScaleZLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            ScaleHorizontalBox, FName("ScaleZLabel"))
+        ScaleZLabel:SetText(FText(" Z:"))
+        SetSmallerFont(ScaleZLabel)
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleZLabel)
+
+        local ScaleZCheckBox = StaticConstructObject(StaticFindObject("/Script/UMG.CheckBox"),
+            ScaleHorizontalBox, FName("ScaleZCheckBox"))
+        HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"] = ScaleZCheckBox
+        ScaleZCheckBox:SetIsChecked(true)
+        ScaleHorizontalBox:AddChildToHorizontalBox(ScaleZCheckBox)
+
+        verticalBox:AddChildToVerticalBox(ScaleHorizontalBox)
+
+        local ScaleSlider = StaticConstructObject(StaticFindObject("/Script/UMG.Slider"),
+            verticalBox, FName("ScaleSlider"))
+        ScaleSlider:SetValue(1.0)
+        ScaleSlider:SetMinValue(0.1)
+        ScaleSlider:SetMaxValue(10.0)
+
+        HSTM_UI_ALT_HUD_Objects["ScaleSlider"] = ScaleSlider
+
+        verticalBox:AddChildToVerticalBox(ScaleSlider)
+
+        -- Currently accessing MulticastInlineDelegateProperty from Lua is not supported in UE4SS
+        -- The best we can do is to have another loop that polls the value of the slider and updates the scale
+
+        LoopAsync(500, function()
+            if myInitGameStateHookCount ~= InitGameStateHookCount then
+                Log("Exiting leftover ScaleSlider update loop\n")
+                return true
+            end
+            if not HSTM_UI_ALT_HUD_Objects["ScaleSlider"] then
+                return true
+            end
+            local value = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
+            WeaponScaleMultiplier = value
+            HSTM_UI_ALT_HUD_Objects["ScaleLabel"]:SetText(FText(string.format("Scale: %.1f ", value)))
+            return false
+        end)
+
+        -- ScaleSlider["OnValueChanged"] = function(value)
+        --     WeaponScaleMultiplier = value
+        --     ScaleLabel:SetText(FText(string.format("Scale: %.1f ", value)))
+        -- end
+
+        local ScaleBladeOnlyHorizontalBox = StaticConstructObject(StaticFindObject("/Script/UMG.HorizontalBox"),
+            verticalBox, FName("ScaleBladeOnlyHorizontalBox"))
+        
+        local ScaleBladeOnlyLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            ScaleBladeOnlyHorizontalBox, FName("ScaleBladeOnlyLabel"))
+        ScaleBladeOnlyLabel:SetText(FText("Blade Only:"))
+        SetSmallerFont(ScaleBladeOnlyLabel)
+        ScaleBladeOnlyHorizontalBox:AddChildToHorizontalBox(ScaleBladeOnlyLabel)
+
+        local ScaleBladeOnlyCheckBox = StaticConstructObject(StaticFindObject("/Script/UMG.CheckBox"),
+            ScaleBladeOnlyHorizontalBox, FName("ScaleBladeOnlyCheckBox"))
+        HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"] = ScaleBladeOnlyCheckBox
+        ScaleBladeOnlyHorizontalBox:AddChildToHorizontalBox(ScaleBladeOnlyCheckBox)
+
+        verticalBox:AddChildToVerticalBox(ScaleBladeOnlyHorizontalBox)
 
         HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"] = comboBoxWeapons
         verticalBox:AddChildToVerticalBox(comboBoxWeapons)
 
-        local slot = HSTM_UI_ALT_HUD.WidgetTree.RootWidget:AddChildToCanvas(verticalBox)
-        --slot:SetAnchors({Minimum = {X = 1.0, Y = 0.0}, Maximum = {X = 1.0, Y = 1.0}})
+        local NPCTeamLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            verticalBox, FName("NPCTeam_Label"))
+        NPCTeamLabel:SetText(FText("NPC Team:"))
+        SetSmallerFont(NPCTeamLabel)
+        verticalBox:AddChildToVerticalBox(NPCTeamLabel)
 
+        HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"] = cobmboBoxNPCTeam
+        verticalBox:AddChildToVerticalBox(cobmboBoxNPCTeam)
+
+        local SpawnFrozenNPCsHorizontalBox = StaticConstructObject(StaticFindObject("/Script/UMG.HorizontalBox"),
+            verticalBox, FName("SpawnFrozenNPCsHorizontalBox"))
+
+        local SpawnFrozenNPCsLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            SpawnFrozenNPCsHorizontalBox, FName("SpawnFrozenNPCsLabel"))
+        SpawnFrozenNPCsLabel:SetText(FText("Spawn Frozen NPCs:"))
+        SetSmallerFont(SpawnFrozenNPCsLabel)
+        SpawnFrozenNPCsHorizontalBox:AddChildToHorizontalBox(SpawnFrozenNPCsLabel)
+
+        local SpawnFrozenNPCsCheckBox = StaticConstructObject(StaticFindObject("/Script/UMG.CheckBox"),
+            SpawnFrozenNPCsHorizontalBox, FName("SpawnFrozenNPCsCheckBox"))
+        HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"] = SpawnFrozenNPCsCheckBox
+        SpawnFrozenNPCsHorizontalBox:AddChildToHorizontalBox(SpawnFrozenNPCsCheckBox)
+        
+        verticalBox:AddChildToVerticalBox(SpawnFrozenNPCsHorizontalBox)
+
+        verticalBox:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
+        local slot = HSTM_UI_ALT_HUD.WidgetTree.RootWidget:AddChildToCanvas(verticalBox)
+        -- anchors/alignment do no seem to work yet, neither before nor after adding to a viewport
+        -- slot:SetAnchors({Minimum = {X = 1.0, Y = 0.0}, Maximum = {X = 1.0, Y = 1.0}})
         -- slot:SetAlignment({X = 1.0, Y = 0.0})
         -- slot:SetPosition({X = 0.0, Y = 0.0})
         -- slot:SetSize({X = 0.0, Y = 200.0})
+        HSTM_UI_ALT_HUD:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
         HSTM_UI_ALT_HUD:AddToViewport(99)
         -- slot:SetMinimum({X = 1.0, Y = 0.0})
         -- slot:SetMaximum({X = 1.0, Y = 1.0})
-        --HSTM_UI_ALT_HUD:SetVisibility(Visibility_HITTESTINVISIBLE)
+        --HSTM_UI_ALT_HUD:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
     end
-    -- if not HSTM_UI_ALT_HUD_Spawn then
-    --     Logf("Setting up alternative Spawn HUD implementation...\n")
-    --     local GameInstance = GetGameInstance()
-    --     HSTM_UI_ALT_HUD_Spawn = StaticConstructObject(StaticFindObject("/Script/UMG.UserWidget"), GameInstance,
-    --         FName("HSTM_UI_HUD_Spawn_Widget"))
-    --     HSTM_UI_ALT_HUD_Spawn.WidgetTree = StaticConstructObject(StaticFindObject("/Script/UMG.WidgetTree"),
-    --         HSTM_UI_ALT_HUD_Spawn, FName("HSTM_UI_HUD_Spawn_Widget_Tree"))
-    --     HSTM_UI_ALT_HUD_Spawn.WidgetTree.RootWidget = StaticConstructObject(StaticFindObject("/Script/UMG.CanvasPanel"),
-    --         HSTM_UI_ALT_HUD_Spawn.WidgetTree, FName("HSTM_UI_HUD_Spawn_Widget_Tree_Canvas"))
-    --     local verticalBox = StaticConstructObject(StaticFindObject("/Script/UMG.VerticalBox"),
-    --         HSTM_UI_ALT_HUD_Spawn.WidgetTree.RootWidget, FName("HSTM_UI_HUD_Spawn_Widget_Tree_Canvas_VerticalBox1"))
-
-    --     local comboBoxArmor = StaticConstructObject(StaticFindObject("/Script/UMG.ComboBox"), verticalBox,
-    --         FName("ComboBoxArmor"))
-
-    --     local comboBoxWeapons = StaticConstructObject(StaticFindObject("/Script/UMG.ComboBox"), verticalBox,
-    --         FName("ComboBoxWeapons"))
-
-    --     verticalBox:AddChildToVerticalBox(comboBoxArmor)
-    --     verticalBox:AddChildToVerticalBox(comboBoxWeapons)
-
-    --     HSTM_UI_ALT_HUD_Spawn.WidgetTree.RootWidget:AddChildToCanvas(verticalBox)
-
-    --     --HSTM_UI_ALT_HUD_Spawn:AddToViewport(99)
-    --     local anchors = HSTM_UI_ALT_HUD_Spawn:GetAnchorsInViewport()
-    --     Logf("Anchors in viewport: {%f, %f, %f, %f}\n", anchors.Minimum.X, anchors.Minimum.Y, anchors.Maximum.X,
-    --         anchors.Maximum.Y)
-
-    --     HSTM_UI_ALT_HUD_Spawn:SetAlignmentInViewport({X = 1.0, Y = 0.0});
-    --     HSTM_UI_ALT_HUD_Spawn:SetPositionInViewport({X = 0.0, Y = 0.0}, true);
-    --     HSTM_UI_ALT_HUD_Spawn:SetDesiredSizeInViewport({X = 0.0, Y = 200.0});
-    --     HSTM_UI_ALT_HUD_Spawn:SetAnchorsInViewport({Minimum = {X = 1.0, Y = 0.0}, Maximum = {X = 1.0, Y = 1.0}})
-
-    --     local anchors = HSTM_UI_ALT_HUD_Spawn:GetAnchorsInViewport()
-    --     Logf("Anchors in viewport: {%f, %f, %f, %f}\n", anchors.Minimum.X, anchors.Minimum.Y, anchors.Maximum.X,
-    --         anchors.Maximum.Y)
-    --     -- anchors.Minimum.X = 1.0
-    --     -- anchors.Minimum.Y = 0.0
-    --     -- anchors.Maximum.X = 1.0
-    --     -- anchors.Maximum.Y = 1.0
-    --     -- HSTM_UI_ALT_HUD_Spawn:SetAnchorsInViewport(anchors)
-    --     -- anchors = HSTM_UI_ALT_HUD_Spawn:GetAnchorsInViewport()
-    --     -- Logf("Anchors in viewport: {%f, %f, %f, %f}\n", anchors.Minimum.X, anchors.Minimum.Y, anchors.Maximum.X,
-    --     --     anchors.Maximum.Y)
-
-
-    --     HSTM_UI_ALT_HUD_Spawn:AddToViewport(99)
-
-    -- end
 end
 
 ------------------------------------------------------------------------------
@@ -895,17 +996,17 @@ function ToggleModUI()
         HSTM_UI_ALT_HUD:SetVisibility(Visibility_HIDDEN)
         ModUIHUDVisible = false
     else
-        HSTM_UI_ALT_HUD:SetVisibility(Visibility_VISIBLE)
+        HSTM_UI_ALT_HUD:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
         ModUIHUDVisible = true
         -- If the HUD update loop has crashed, try to update the HUD in the worst case
-        HUD_UpdatePlayerStats()
+        HUD_UpdatePlayerStats_Playtest()
     end
     -- TODO
     if ModUISpawnVisible then
         --cache.ui_spawn:SetVisibility(Visibility_HIDDEN)
         ModUISpawnVisible = false
     else
-        --cache.ui_spawn:SetVisibility(Visibility_VISIBLE)
+        --cache.ui_spawn:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
         ModUISpawnVisible = true
     end
 end
@@ -1431,9 +1532,12 @@ function SpawnSelectedWeapon()
     -- local Selected_Spawn_Weapon = cache.ui_spawn['Selected_Spawn_Weapon']:ToString()
     local Selected_Spawn_Weapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
     -- WeaponScaleMultiplier = cache.ui_spawn['HSTM_Slider_WeaponSize']
-    -- WeaponScaleY = cache.ui_spawn['HSTM_Flag_ScaleY']
-    -- WeaponScaleZ = cache.ui_spawn['HSTM_Flag_ScaleZ']
-    -- WeaponScaleBladeOnly = cache.ui_spawn['HSTM_Flag_ScaleBladeOnly']
+    WeaponScaleMultiplier = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
+    WeaponScaleX = HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"]:IsChecked()
+    WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
+    WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
+    WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
+    
     --Logf("Spawning weapon key [%s]\n", Selected_Spawn_Weapon)
     --    if not Selected_Spawn_Weapon == nil and not Selected_Spawn_Weapon == "" then
     --local _, selected_actor = table.random_key_value(all_weapons)
@@ -1457,7 +1561,8 @@ end
 function SpawnSelectedNPC()
     -- -- Update the flag from the Spawn HUD
     -- SpawnFrozenNPCs = cache.ui_spawn['HSTM_Flag_SpawnFrozenNPCs']
-    -- NPCTeam = tonumber(cache.ui_spawn['Selected_Spawn_NPC_Team']:ToString())
+    SpawnFrozenNPCs = HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsChecked()
+    NPCTeam = tonumber(HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString())
     -- local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
     -- --Logf("Spawning NPC key [%s]\n", Selected_Spawn_NPC)
     -- --    if not Selected_Spawn_NPC == nil and not Selected_Spawn_NPC == "" then
@@ -1573,7 +1678,9 @@ function PopulateNPCComboBox()
 end
 
 function PopulateNPCTeamComboBox()
-    local ComboBox_NPC_Team = cache.ui_spawn['ComboBox_NPC_Team']
+    --local ComboBox_NPC_Team = cache.ui_spawn['ComboBox_NPC_Team']
+    local ComboBox_NPC_Team = HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]
+
     ComboBox_NPC_Team:ClearOptions()
 
     for TeamIndex = 0, 2 do
@@ -1913,8 +2020,10 @@ function ShootProjectile()
         end
         class = selected_actor
     elseif class == DEFAULT_NPC_PROJECTILE then
+        -- TODO fix combobox
         SpawnFrozenNPCs = cache.ui_spawn['HSTM_Flag_SpawnFrozenNPCs']
-        NPCTeam = tonumber(cache.ui_spawn['Selected_Spawn_NPC_Team']:ToString())
+        NPCTeam = tonumber(HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString())
+        -- TODO fix combobox
         local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
         local selected_actor = all_characters[Selected_Spawn_NPC]
         class = selected_actor

@@ -85,12 +85,12 @@
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/Hats/BP_Armor_Head_Hat_Bycocket_B_001.BP_Armor_Head_Hat_Bycocket_B_001_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/Hats/BP_Armor_Head_Hat_Bycocket_A_002.BP_Armor_Head_Hat_Bycocket_A_002_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/Hats/BP_Armor_Head_Hat_Bycocket_A_001.BP_Armor_Head_Hat_Bycocket_A_001_C
-/Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Panties.BP_Armor_Legs_Panties_C
+[BAD]/Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Panties.BP_Armor_Legs_Panties_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Hosen_C.BP_Armor_Legs_Hosen_C_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Hosen_B.BP_Armor_Legs_Hosen_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Hosen_Arming_A.BP_Armor_Legs_Hosen_Arming_A_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Hosen_A.BP_Armor_Legs_Hosen_A_C
-/Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Shirt_B.BP_Armor_Body_Shirt_B_C
+[BAD]/Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Shirt_B.BP_Armor_Body_Shirt_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Shirt_A.BP_Armor_Body_Shirt_A_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Doublet_Arming.BP_Armor_Body_Doublet_Arming_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Doublet.BP_Armor_Body_Doublet_C

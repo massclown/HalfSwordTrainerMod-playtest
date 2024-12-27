@@ -6,19 +6,35 @@ For the Nov 2023 demo v0.3 use the [regular trainer mod](https://github.com/mass
 # How to install
 Right now, the only way to install is manually. The one-click installer will need quite some work to support two games.
 
-Follow the steps at https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#installation-hard-mode 
-but download **experimental** UE4SS from here:
+Follow the steps at https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#installation-hard-mode, 
+but make sure to do the following changes to that procedure:
+1) find the game installation folder of the playtest version of the game, not the demo, obviously.
+
+* The Half Sword Playtest is usually installed somewhere like: 
+`C:\Program Files (x86)\Steam\steamapps\common\Half Sword Playtest\`, and if that is the case for you, then:
+  * the UE4SS archive will need to be unzipped into:
+`C:\Program Files (x86)\Steam\steamapps\common\Half Sword Playtest\VersionTest54\Binaries\Win64`
+  * and the mod's release will need to be unzipped into: 
+`C:\Program Files (x86)\Steam\steamapps\common\Half Sword Playtest\VersionTest54\Binaries\Win64\use4ss\Mods`
+
+2) download the release of this mod from here:
+https://github.com/massclown/HalfSwordTrainerMod-playtest/releases
+
+3) download **experimental** UE4SS from here:
 https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1-234-g4fc8691.zip
-and now all the mod files go into a `ue4ss\Mods` subfolder inside the game's folder.
+
+4) follow the rest of the procedure with the above changes in mind.
+
+# How does the mod look on screen
+
+![Alt text](images/hud_playtest_v0.10_2K.jpg?raw=true "Screenshot of mod UI v0.10")
 
 # Known issues and limitations
-* Unfortunately **there is no user interface**, just use the [keybinds](https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#keyboard-shortcuts-of-this-mod) and check the UE4SS logs (`Ctrl+O`). 
-* Most of the functionality from the regular trainer mod may still work.
-* Because there is no user interface, `F1` spawns random armor and `F2` spawns random weapons. 
-  * Use the despawn keybind `F5` to despawn them if you don't like what you get.
+* Unfortunately **there is almost no user interface**, just use the [keybinds](https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#keyboard-shortcuts-of-this-mod) and check the UE4SS logs (`Ctrl+O`) if something goes wrong. 
+* Most of the functionality from the regular trainer mod may still work (or not)
 * `F3` only spawns an unarmed NPC Willie. 
 * `F4` spawns the only object present in the game files, the training dummy.
 * Jump is now bound to `Numpad 5`, as `Space` is used by the game for kicking.
   * Jump also has been unlocked to allow infinite ragdolling.
-* Player team changes and NPC team changes are broken. 
+* Player team changes and NPC team changes are somewhat broken. 
   * You can get your NPC teammates to attack you by changing your team, but they will keep attacking you if you change it back, etc.

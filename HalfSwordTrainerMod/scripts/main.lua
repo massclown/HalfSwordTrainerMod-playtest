@@ -1047,7 +1047,7 @@ local default_loadout = {
 -- Use [BAD] in the beginning of the line to comment it
 
 function LoadCustomLoadout()
-    local file = io.open("Mods\\HalfSwordTrainerMod\\data\\custom_loadout.txt", "r");
+    local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\custom_loadout.txt", "r");
     if file ~= nil then
         if custom_loadout then custom_loadout = {} end
         Logf("Loading custom loadout...\n")
@@ -1630,7 +1630,7 @@ function PopulateArmorComboBox()
     local ComboBox_Armor = HSTM_UI_ALT_HUD_Objects["ComboBox_Armor"]
     if ComboBox_Armor and ComboBox_Armor:IsValid() then
         ComboBox_Armor:ClearOptions()
-        local file = io.open("Mods\\HalfSwordTrainerMod\\data\\all_armor.txt", "r");
+        local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_armor.txt", "r");
         for line in file:lines() do
             if not line:starts_with('[BAD]') then
                 local fkey = ExtractHumanReadableNameShorter(line)
@@ -1650,7 +1650,7 @@ function PopulateWeaponComboBox()
     if ComboBox_Weapon and ComboBox_Weapon:IsValid() then
         ComboBox_Weapon:ClearOptions()
 
-        local file = io.open("Mods\\HalfSwordTrainerMod\\data\\all_weapons.txt", "r");
+        local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_weapons.txt", "r");
         for line in file:lines() do
             if not line:starts_with('[BAD]') then
                 local fkey = ExtractHumanReadableNameShorter(line)
@@ -1669,7 +1669,7 @@ function PopulateNPCComboBox()
     -- local ComboBox_NPC = cache.ui_spawn['ComboBox_NPC']
     -- ComboBox_NPC:ClearOptions()
 
-    local file = io.open("Mods\\HalfSwordTrainerMod\\data\\all_characters.txt", "r");
+    local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_characters.txt", "r");
     for line in file:lines() do
         if not line:starts_with('[BAD]') then
             local fkey = ExtractHumanReadableNameShorter(line)
@@ -1696,7 +1696,7 @@ function PopulateObjectComboBox()
     -- local ComboBox_Object = cache.ui_spawn['ComboBox_Object']
     -- ComboBox_Object:ClearOptions()
 
-    local file = io.open("Mods\\HalfSwordTrainerMod\\data\\all_objects.txt", "r");
+    local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_objects.txt", "r");
     for line in file:lines() do
         if not line:starts_with('[BAD]') then
             local fkey = ExtractHumanReadableNameShorter(line)

@@ -19,11 +19,14 @@ but make sure to do the following changes to that procedure:
 
 2) download the release of this mod from here:
 https://github.com/massclown/HalfSwordTrainerMod-playtest/releases
+or just download the bleeding edge version directly from the repository.
 
 3) download **experimental** UE4SS from here:
 https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1-234-g4fc8691.zip
 
-4) follow the rest of the procedure with the above changes in mind.
+4) No need to enable `BPModLoaderMod` as this version of the mod for the playtest does not use Blueprint UI.
+
+5) follow the rest of the procedure with the above changes in mind.
 
 # How does the mod look on screen
 

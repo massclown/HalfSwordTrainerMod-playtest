@@ -19,7 +19,7 @@ local HSTM_UI_ALT_HUD_TextBox_Names = {
     ["TextBox_Logo"] = { 0, "Half Sword Trainer Mod v%s" },
     -- ["TextBox_Score"] = { 1, "Score : %d" },
     -- ["TextBox_Level"] = { 2, "Level : %d" },
-    ["TextBox_HP"] = { 3, "HP : %d" },
+    ["TextBox_HP"] = { 3, "HP : %.2f" },
     ["TextBox_Cons"] = { 4, "Conscious : %.2f" },
     ["TextBox_Tonus"] = { 5, "Tonus : %.2f" },
     ["TextBox_SuperStrength"] = { 6, "SuperStrength : %s" },
@@ -1940,21 +1940,15 @@ local DEFAULT_NPC_PROJECTILE = "/CURRENTLY_SELECTED_NPC.CURRENTLY_SELECTED_NPC_D
 
 -- The first and the last projectiles in this list are special cases that launch the currently selected weapon and NPC from the menus, respectively
 local projectiles = {
-    --    { DEFAULT_PROJECTILE,                                                                                            { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 100 },
+    { DEFAULT_PROJECTILE,                                                                                            { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 100 },
     { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Reforged/ModularWeaponBP_Spear_B.ModularWeaponBP_Spear_B_C",    { X = 0.5, Y = 0.5, Z = 0.5 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 100 },
     { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Pitchfork_A.BP_Weapon_Tool_Pitchfork_A_C", { X = 0.5, Y = 0.5, Z = 0.5 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 150 },
     { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_Dagger.ModularWeaponBP_Dagger_C",               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 50 },
     { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Axe_C.BP_Weapon_Tool_Axe_C_C",             { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 180.0, Roll = 0.0 }, 50 },
-    --    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Mallet_B.BP_Weapon_Tool_Mallet_B_C",       { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 100 },
     { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Improvized/BP_Weapon_Improv_Stool.BP_Weapon_Improv_Stool_C",    { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 150 },
     { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Shield_Buckler.Shield_Buckler_C",                               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 150 },
-    --    { "/Game/Assets/Destructible/Dest_Barrel_1_BP.Dest_Barrel_1_BP_C",                                               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   100 },
-    --    { "/Game/Assets/Props/Furniture/Meshes/BM_Prop_Furniture_Small_Bench_001.BM_Prop_Furniture_Small_Bench_001_C",   { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   100 },
-    --    { "/Game/Assets/Props/Furniture/Meshes/BP_Prop_Furniture_Small_Table_001.BP_Prop_Furniture_Small_Table_001_C",   { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   100 },
-    --    { DEFAULT_NPC_PROJECTILE,                                                                                        { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   500 },
-    --    { "/Game/Character/Blueprints/Willie_BP.Willie_BP_C",                                                            { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   500 },
-    --    { "/Game/Character/Blueprints/Willie_Torso_BP.Willie_Torso_BP_C",                                                { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   500 },
-    --    ,{ "/Game/Assets/Props/Barrels/Meshes/BP_Prop_Barrel_002.BP_Prop_Barrel_002_C",                                   { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   100 }
+    -- Not a good idea at the moment, NPCs spawn and hang for some time, so they don't fly at all
+    --{ DEFAULT_NPC_PROJECTILE,                                                                                        { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   500 },
 }
 
 -- The projectile shooting logic attempts to take into account various manual corrections
@@ -1969,13 +1963,14 @@ function ShootProjectile()
 
     -- Allow to shoot a weapon from spawn menu, taking into account the scale
     if class == DEFAULT_PROJECTILE then
-        local Selected_Spawn_Weapon = cache.ui_spawn['Selected_Spawn_Weapon']:ToString()
-        WeaponScaleMultiplier = cache.ui_spawn['HSTM_Slider_WeaponSize']
-        WeaponScaleX = cache.ui_spawn['HSTM_Flag_ScaleX']
-        WeaponScaleY = cache.ui_spawn['HSTM_Flag_ScaleY']
-        WeaponScaleZ = cache.ui_spawn['HSTM_Flag_ScaleZ']
-        WeaponScaleBladeOnly = cache.ui_spawn['HSTM_Flag_ScaleBladeOnly']
-        ScaleObjects = cache.ui_spawn['HSTM_Flag_ScaleObjects']
+        -- ScaleObjects = cache.ui_spawn['HSTM_Flag_ScaleObjects']
+
+        local Selected_Spawn_Weapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
+        WeaponScaleMultiplier = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
+        WeaponScaleX = HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"]:IsChecked()
+        WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
+        WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
+        WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
 
         local selected_actor = all_weapons[Selected_Spawn_Weapon]
         --Logf("Shooting custom weapon [%s]\n", selected_actor)
@@ -2024,11 +2019,12 @@ function ShootProjectile()
         class = selected_actor
     elseif class == DEFAULT_NPC_PROJECTILE then
         -- TODO fix combobox
-        SpawnFrozenNPCs = cache.ui_spawn['HSTM_Flag_SpawnFrozenNPCs']
+        SpawnFrozenNPCs = HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsChecked()
         NPCTeam = tonumber(HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString())
         -- TODO fix combobox
-        local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
-        local selected_actor = all_characters[Selected_Spawn_NPC]
+        --local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
+        --local selected_actor = all_characters[Selected_Spawn_NPC]
+        local selected_actor = "/Game/Character/Blueprints/Willie_BP.Willie_BP_C"
         class = selected_actor
     end
 
@@ -2128,19 +2124,19 @@ end
 function HUD_CacheProjectile()
     local class, _, _, _ = table.unpack(projectiles[selectedProjectile])
     local classname = class
-    -- if class == DEFAULT_PROJECTILE then
-    --     local selectedWeapon = cache.ui_spawn['Selected_Spawn_Weapon']:ToString()
-    --     classname = all_weapons[selectedWeapon]
+    if class == DEFAULT_PROJECTILE then
+        local selectedWeapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
+        classname = all_weapons[selectedWeapon]
     -- elseif class == DEFAULT_NPC_PROJECTILE then
     --     local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
     --     classname = all_characters[Selected_Spawn_NPC]
-    -- end
+    end
     local projectileShortName = ExtractHumanReadableNameShorter(classname)
-    -- if class == DEFAULT_PROJECTILE then
-    --     projectileShortName = projectileShortName .. " (Weapon menu)"
+    if class == DEFAULT_PROJECTILE then
+        projectileShortName = projectileShortName .. " (menu)"
     -- elseif class == DEFAULT_NPC_PROJECTILE then
     --     projectileShortName = projectileShortName .. " (NPC menu)"
-    -- end
+    end
     if ModUIHUDVisible then
         HSTM_UI_ALT_HUD_Objects["TextBox_Projectile"]:SetText(
             FText(

@@ -22,12 +22,13 @@ local HSTM_UI_ALT_HUD_TextBox_Names = {
     ["TextBox_HP"] = { 3, "HP : %.2f" },
     ["TextBox_Cons"] = { 4, "Conscious : %.2f" },
     ["TextBox_Tonus"] = { 5, "Tonus : %.2f" },
-    ["TextBox_SuperStrength"] = { 6, "SuperStrength : %s" },
-    ["TextBox_Invulnerability"] = { 7, "Invulnerability : %s" },
-    ["TextBox_GameSpeed"] = { 8, "Game Speed : %.2f (%s)" },
-    ["TextBox_NPCsFrozen"] = { 9, "NPCs Frozen : %s" },
-    ["TextBox_Projectile"] = { 10, "Projectile : %s" },
-    ["TextBox_Player_Team"] = { 11, "Team : %d" }
+    ["TextBox_Stamina"] = { 6, "Stamina : %.2f" },
+    ["TextBox_SuperStrength"] = { 7, "SuperStrength : %s" },
+    ["TextBox_Invulnerability"] = { 8, "Invulnerability : %s" },
+    ["TextBox_GameSpeed"] = { 9, "Game Speed : %.2f (%s)" },
+    ["TextBox_NPCsFrozen"] = { 10, "NPCs Frozen : %s" },
+    ["TextBox_Projectile"] = { 11, "Projectile : %s" },
+    ["TextBox_Player_Team"] = { 12, "Team : %d" }
 }
 
 local function GetSortedHUDTextBoxNames()
@@ -82,6 +83,7 @@ local PlayerTeam = 0
 local PlayerHealth = 0
 local PlayerConsciousness = 0
 local PlayerTonus = 0
+local PlayerStamina = 0
 
 -- Cached from the spawn UI (HSTM_Slider_WeaponSize)
 local WeaponScaleMultiplier = 1.0
@@ -901,6 +903,11 @@ function HUD_UpdatePlayerStats_Playtest()
     HSTM_UI_ALT_HUD_Objects["TextBox_Tonus"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_Tonus"][2]
         :format(
             PlayerTonus)))
+
+    PlayerStamina = player['Stamina']
+    HSTM_UI_ALT_HUD_Objects["TextBox_Stamina"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_Stamina"][2]
+        :format(
+            PlayerStamina)))
     --
     GameSpeed = cache.worldsettings['TimeDilation']
     HSTM_UI_ALT_HUD_Objects["TextBox_GameSpeed"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
@@ -2127,15 +2134,15 @@ function HUD_CacheProjectile()
     if class == DEFAULT_PROJECTILE then
         local selectedWeapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
         classname = all_weapons[selectedWeapon]
-    -- elseif class == DEFAULT_NPC_PROJECTILE then
-    --     local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
-    --     classname = all_characters[Selected_Spawn_NPC]
+        -- elseif class == DEFAULT_NPC_PROJECTILE then
+        --     local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
+        --     classname = all_characters[Selected_Spawn_NPC]
     end
     local projectileShortName = ExtractHumanReadableNameShorter(classname)
     if class == DEFAULT_PROJECTILE then
         projectileShortName = projectileShortName .. " (menu)"
-    -- elseif class == DEFAULT_NPC_PROJECTILE then
-    --     projectileShortName = projectileShortName .. " (NPC menu)"
+        -- elseif class == DEFAULT_NPC_PROJECTILE then
+        --     projectileShortName = projectileShortName .. " (NPC menu)"
     end
     if ModUIHUDVisible then
         HSTM_UI_ALT_HUD_Objects["TextBox_Projectile"]:SetText(
@@ -2553,7 +2560,14 @@ function ScaleObjectUnderCamera()
         end
     end
 end
-
+------------------------------------------------------------------------------
+-- Calls the built-in function to save the current loadout on the player
+function SaveLoadout()
+    local player = GetActivePlayer()
+    Logf("Saving loadout for player: %s\n", player:GetFullName())
+    player['Save Loadout']()
+    Logf("Loadout saved.\n")
+end
 ------------------------------------------------------------------------------
 -- This function is called when the mod is loaded at the end of this file
 function AllHooks()
@@ -2683,9 +2697,14 @@ function AllKeybindHooks()
         end)
     end)
 
+    RegisterKeyBind(Key.L, { ModifierKey.CONTROL }, function()
+        SaveLoadout()
+    end)
+
     RegisterKeyBind(Key.L, function()
         SpawnLoadoutAroundPlayer()
     end)
+
 
     RegisterKeyBind(Key.OEM_MINUS, function()
         ExecuteInGameThread(function()

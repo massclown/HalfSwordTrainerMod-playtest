@@ -29,12 +29,13 @@ https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1
 
 ![Alt text](images/hud_playtest_v0.10_2K.jpg?raw=true "Screenshot of mod UI v0.10")
 
-# Known issues and limitations
+# Known issues and limitations and changes from trainer mod for Demo 
 * Unfortunately **there is almost no user interface**, just use the [keybinds](https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#keyboard-shortcuts-of-this-mod) and check the UE4SS logs (`Ctrl+O`) if something goes wrong. 
 * Most of the functionality from the regular trainer mod may still work (or not)
 * `F3` only spawns an unarmed NPC Willie. 
 * `F4` spawns the only object present in the game files, the training dummy.
 * Jump is now bound to `Numpad 5`, as `Space` is used by the game for kicking.
   * Jump also has been unlocked to allow infinite ragdolling.
+* `Ctrl + L` saves the current loadout to the game's standard loadout slot (I believe you have to be in a class above unarmed for that to be loaded afterwards)
 * Player team changes and NPC team changes are somewhat broken. 
   * You can get your NPC teammates to attack you by changing your team, but they will keep attacking you if you change it back, etc.

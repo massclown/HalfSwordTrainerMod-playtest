@@ -2,6 +2,7 @@
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Feet/BP_Armor_Feet_Sabbatons_A.BP_Armor_Feet_Sabbatons_A_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Doublet_Arming.BP_Armor_Body_Doublet_Arming_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Cuirass_C_T3.BP_Armor_Body_Cuirass_C_T3_C
+/Game/Assets/Armor/Blueprints/Built_Armor/Mail/BP_Armor_Waist_Foulds_T3.BP_Armor_Waist_Foulds_T3_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Arms/BP_Armor_Arms_Vambrace_C_T3_B.BP_Armor_Arms_Vambrace_C_T3_B_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Legs/BP_Armor_Legs_Cuisse_A_T3.BP_Armor_Legs_Cuisse_A_T3_C
 /Game/Assets/Armor/Blueprints/Built_Armor/Metal/Legs/BP_Armor_Legs_Greaves_T3.BP_Armor_Legs_Greaves_T3_C

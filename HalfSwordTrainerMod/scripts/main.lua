@@ -714,7 +714,7 @@ function TempSetupCustomHUD()
 
         local ScaleBladeOnlyHorizontalBox = StaticConstructObject(StaticFindObject("/Script/UMG.HorizontalBox"),
             verticalBox, FName("ScaleBladeOnlyHorizontalBox"))
-        
+
         local ScaleBladeOnlyLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
             ScaleBladeOnlyHorizontalBox, FName("ScaleBladeOnlyLabel"))
         ScaleBladeOnlyLabel:SetText(FText("Blade Only:"))
@@ -753,7 +753,7 @@ function TempSetupCustomHUD()
             SpawnFrozenNPCsHorizontalBox, FName("SpawnFrozenNPCsCheckBox"))
         HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"] = SpawnFrozenNPCsCheckBox
         SpawnFrozenNPCsHorizontalBox:AddChildToHorizontalBox(SpawnFrozenNPCsCheckBox)
-        
+
         verticalBox:AddChildToVerticalBox(SpawnFrozenNPCsHorizontalBox)
 
         verticalBox:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
@@ -1016,20 +1016,22 @@ end
 -- Just some high-tier loadout I like, all the best armor, a huge shield, long polearm and two one-armed swords.
 -- The table structure is: class, {X=scale,Y=scale,Z=scale}, scale_blade_only}
 local default_loadout = {
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Hosen_Arming_C.BP_Armor_Hosen_Arming_C_C",                               DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Shoes_A.BP_Armor_Shoes_A_C",                                             DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Doublet_Arming.BP_Armor_Doublet_Arming_C",                               DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Cuisse_B.BP_Armor_Cuisse_B_C",                                           DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Cuirass_C.BP_Armor_Cuirass_C_C",                                         DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Vambrace_A.BP_Armor_Vambrace_A_C",                                       DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Bevor.BP_Armor_Bevor_C",                                                 DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Pauldron_A.BP_Armor_Pauldron_A_C",                                       DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Sallet_Solid_C_002.BP_Armor_Sallet_Solid_C_002_C",                       DefaultScale1x, false },
-    { "/Game/Assets/Armor/Blueprints/Built_Armor/BP_Armor_Gauntlets.BP_Armor_Gauntlets_C",                                         DefaultScale1x, false },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Pavise1.Pavise1_C",                                                           DefaultScale1x, false },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_BastardSword.ModularWeaponBP_BastardSword_C",                 DefaultScale1x, false },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_BastardSword.ModularWeaponBP_BastardSword_C",                 DefaultScale1x, false },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tiers/ModularWeaponBP_Polearm_High_Tier.ModularWeaponBP_Polearm_High_Tier_C", DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Legs_Hosen_Arming_A.BP_Armor_Legs_Hosen_Arming_A_C",                 DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Feet/BP_Armor_Feet_Sabbatons_A.BP_Armor_Feet_Sabbatons_A_C",                  DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Cloth/BP_Armor_Body_Doublet_Arming.BP_Armor_Body_Doublet_Arming_C",                 DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Chest/BP_Armor_Body_Cuirass_C_T3.BP_Armor_Body_Cuirass_C_T3_C",               DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Mail/BP_Armor_Waist_Foulds_T3.BP_Armor_Waist_Foulds_T3_C",                          DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Arms/BP_Armor_Arms_Vambrace_C_T3_B.BP_Armor_Arms_Vambrace_C_T3_B_C",          DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Legs/BP_Armor_Legs_Cuisse_A_T3.BP_Armor_Legs_Cuisse_A_T3_C",                  DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Legs/BP_Armor_Legs_Greaves_T3.BP_Armor_Legs_Greaves_T3_C",                    DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Neck/BP_Armor_Neck_Bevor_T3.BP_Armor_Neck_Bevor_T3_C",                        DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Shoulders/BP_Armor_Shoulders_Pauldron_C_B.BP_Armor_Shoulders_Pauldron_C_B_C", DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Head/BP_Armor_Head_Sallet_Solid_C_002.BP_Armor_Head_Sallet_Solid_C_002_C",    DefaultScale1x, false },
+    { "/Game/Assets/Armor/Blueprints/Built_Armor/Metal/Hands/BP_Armor_Hands_Gauntlets_T3B.BP_Armor_Hands_Gauntlets_T3B_C",           DefaultScale1x, false },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Shield_Pavise_Tower.Shield_Pavise_Tower_C",                                     DefaultScale1x, false },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_BastardSword_T3.ModularWeaponBP_BastardSword_T3_C",             DefaultScale1x, false },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_BastardSword_T3.ModularWeaponBP_BastardSword_T3_C",             DefaultScale1x, false },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tiers/ModularWeaponBP_Polearm_High_Tier.ModularWeaponBP_Polearm_High_Tier_C",   DefaultScale1x, false },
 }
 
 -- Read custom loadout from a text file `data\custom_loadout.txt` containing class names to spawn around player
@@ -1538,7 +1540,7 @@ function SpawnSelectedWeapon()
     WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
     WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
     WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
-    
+
     --Logf("Spawning weapon key [%s]\n", Selected_Spawn_Weapon)
     --    if not Selected_Spawn_Weapon == nil and not Selected_Spawn_Weapon == "" then
     --local _, selected_actor = table.random_key_value(all_weapons)

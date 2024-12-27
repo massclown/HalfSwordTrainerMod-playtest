@@ -1,6 +1,7 @@
--- Half Sword Trainer Mod v0.10 by massclown
--- https://github.com/massclown/HalfSwordTrainerMod
--- Requirements: UE4SS 2.5.2 (or newer) and a Blueprint mod HSTM_UI (see repo)
+-- Half Sword Trainer Mod v0.10 by massclown for Half Sword Playtest only
+-- https://github.com/massclown/HalfSwordTrainerMod-playtest
+-- Requirements: LATEST EXPERIMENTAL UE4SS build from github after November 2024, e.g.
+-- https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1-234-g4fc8691.zip
 ------------------------------------------------------------------------------
 local mod_version = "0.10"
 ------------------------------------------------------------------------------
@@ -2951,27 +2952,28 @@ function SanityCheckAndInit()
     if UE4SS_Major == 2 and UE4SS_Minor == 5 and (UE4SS_Hotfix == 2 or UE4SS_Hotfix == 1) then
         AllHooks()
     elseif UE4SS_Major == 3 then -- and UE4SS_Minor == 0 and UE4SS_Hotfix == 0 then
-        -- We are on UE4SS 3.x.x
-        -- TODO special handling of BPModLoaderMod
-        -- Currently the best course of action is to copy BPModLoaderMod from UE4SS 2.5.2
-        -- We will check if the BPModLoaderMod is our patched one or not
-        local bpml_file_path = "Mods\\BPModLoaderMod\\Scripts\\main.lua"
-        local bpml_file = io.open(bpml_file_path, "r")
-        if bpml_file then
-            local file_size = bpml_file:seek("end")
-            --            Logf("BMPL size: %d\n", file_size)
-            -- Yes, this is horrible.
-            -- The file contains 203 lines
-            -- 7819 is the size of that file with CRLF (Windows style) endings and
-            -- 7616 is the size of that file with LF (unix style) endings (7616 + 203 = 7819)
-            -- If you download the master branch from github you get the LF, otherwise CRLF.
-            if file_size ~= 7819 and file_size ~= 7616 and file_size ~= 10962 then
-                Logf(
-                    "You are using UE4SS 3.x.x, please copy Mods\\BPModLoaderMod\\Scripts\\main.lua from UE4SS 2.5.2!\n")
-            end
-        else
-            error("BPModLoaderMod not found!")
-        end
+        -- All this is commented out as we don't need BP Mod Loader as UE 5.4.4 refuses to load BP mods, or so it seems
+        -- -- We are on UE4SS 3.x.x
+        -- -- TODO special handling of BPModLoaderMod
+        -- -- Currently the best course of action is to copy BPModLoaderMod from UE4SS 2.5.2
+        -- -- We will check if the BPModLoaderMod is our patched one or not
+        -- local bpml_file_path = "Mods\\BPModLoaderMod\\Scripts\\main.lua"
+        -- local bpml_file = io.open(bpml_file_path, "r")
+        -- if bpml_file then
+        --     local file_size = bpml_file:seek("end")
+        --     --            Logf("BMPL size: %d\n", file_size)
+        --     -- Yes, this is horrible.
+        --     -- The file contains 203 lines
+        --     -- 7819 is the size of that file with CRLF (Windows style) endings and
+        --     -- 7616 is the size of that file with LF (unix style) endings (7616 + 203 = 7819)
+        --     -- If you download the master branch from github you get the LF, otherwise CRLF.
+        --     if file_size ~= 7819 and file_size ~= 7616 and file_size ~= 10962 then
+        --         Logf(
+        --             "You are using UE4SS 3.x.x, please copy Mods\\BPModLoaderMod\\Scripts\\main.lua from UE4SS 2.5.2!\n")
+        --     end
+        -- else
+        --     error("BPModLoaderMod not found!")
+        -- end
         AllHooks()
     else
         -- Unsupported UE4SS version
@@ -2979,6 +2981,7 @@ function SanityCheckAndInit()
     end
 
     -- Half Sword steam demo is on UE 5.1 currently.
+    -- Half Sword Playtest demo is on UE 5.4.4 currently.
     -- If UE4SS didn't detect the correct UE version, we bail out.
     assert(UnrealVersion.IsEqual(5, 4))
 

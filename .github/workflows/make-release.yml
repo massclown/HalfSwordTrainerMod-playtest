@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create zip file
+        id: create_zip
+        run: |
+          ZIP_NAME="HalfSwordTrainerMod_${GITHUB_REF_NAME}.zip"
+          zip -r "$ZIP_NAME" HalfSwordTrainerMod LICENSE README.md
+          echo "::set-output name=ZIP_NAME::$ZIP_NAME"
+
+      - name: Create a github release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.create_zip.outputs.ZIP_NAME }}
+          tag_name: ${{ github.ref }}
+          name: Half Sword Trainer Mod ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

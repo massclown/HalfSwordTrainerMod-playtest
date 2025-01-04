@@ -3,9 +3,16 @@ This is an experimental version of the trainer mod for Half Sword Playtest only.
 
 For the Nov 2023 demo v0.3 use the [regular trainer mod](https://github.com/massclown/HalfSwordTrainerMod).
 
-# How to install
-Right now, the only way to install is manually. The one-click installer will need quite some work to support two games.
+# How to install (easy)
+The one-click installer supports Playtest and this mod.
 
+It will automatically choose the correct versions of everything.
+
+## Download the fresh installer here at https://github.com/massclown/HalfSwordModInstaller/releases/latest/download/HalfSwordModInstaller.exe
+
+The documentation for the installer is here: https://github.com/massclown/HalfSwordModInstaller
+
+# How to install (hard)
 Follow the steps at https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#installation-hard-mode, 
 but make sure to do the following changes to that procedure:
 1) find the game installation folder of the playtest version of the game, not the demo, obviously.
@@ -42,3 +49,6 @@ https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1
 * `Ctrl + L` saves the current loadout to the game's standard loadout slot (I believe you have to be in a class above unarmed for that to be loaded afterwards)
 * Player team changes and NPC team changes are somewhat broken. 
   * You can get your NPC teammates to attack you by changing your team, but they will keep attacking you if you change it back, etc.
+
+# License
+Distributed under the MIT License. See LICENSE file for more information.

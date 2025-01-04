@@ -1,9 +1,9 @@
--- Half Sword Trainer Mod v0.10 by massclown for Half Sword Playtest only
+-- Half Sword Trainer Mod v0.11 by massclown for Half Sword Playtest only
 -- https://github.com/massclown/HalfSwordTrainerMod-playtest
 -- Requirements: LATEST EXPERIMENTAL UE4SS build from github after November 2024, e.g.
 -- https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1-234-g4fc8691.zip
 ------------------------------------------------------------------------------
-local mod_version = "0.10"
+local mod_version = "0.11"
 ------------------------------------------------------------------------------
 local maf = require 'maf'
 local UEHelpers = require("UEHelpers")
@@ -80,6 +80,7 @@ local Invulnerable = false
 local level = 0
 local PlayerScore = 0
 local PlayerTeam = 0
+local maxPlayerTeam = 9
 local PlayerHealth = 0
 local PlayerConsciousness = 0
 local PlayerTonus = 0
@@ -866,6 +867,11 @@ end
 --     HUD_CacheProjectile()
 -- end
 
+function formatHUDTextBox(boxName, ...)
+    HSTM_UI_ALT_HUD_Objects[boxName]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names[boxName][2]:format(...)))
+end
+
+------------------------------------------------------------------------------
 -- This implementation is for playtest only, using manually constructed UMG objects
 function HUD_UpdatePlayerStats_Playtest()
     local player = GetActivePlayer()
@@ -878,16 +884,13 @@ function HUD_UpdatePlayerStats_Playtest()
     PlayerHealth = player['Health']
     Invulnerable = player['Invulnerable']
 
-    HSTM_UI_ALT_HUD_Objects["TextBox_Player_Team"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-        ["TextBox_Player_Team"]
-        [2]:format(PlayerTeam)))
-    HSTM_UI_ALT_HUD_Objects["TextBox_HP"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_HP"][2]:format(
-        PlayerHealth)))
-    HSTM_UI_ALT_HUD_Objects["TextBox_Invulnerability"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-        ["TextBox_Invulnerability"][2]:format(tostring(Invulnerable))))
+    formatHUDTextBox("TextBox_Player_Team", PlayerTeam)
 
-    HSTM_UI_ALT_HUD_Objects["TextBox_SuperStrength"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-        ["TextBox_SuperStrength"][2]:format(tostring(SuperStrength))))
+    formatHUDTextBox("TextBox_HP", PlayerHealth)
+
+    formatHUDTextBox("TextBox_Invulnerability", tostring(Invulnerable))
+    
+    formatHUDTextBox("TextBox_SuperStrength", tostring(SuperStrength))
     --
     PlayerScore = cache.map['Score']
     -- HSTM_UI_ALT_HUD_TextBox_Objects["TextBox_Score"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_Score"][2]
@@ -895,28 +898,19 @@ function HUD_UpdatePlayerStats_Playtest()
     --     PlayerScore)))
 
     PlayerConsciousness = player['Consciousness']
-    HSTM_UI_ALT_HUD_Objects["TextBox_Cons"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_Cons"][2]
-        :format(
-            PlayerConsciousness)))
+    formatHUDTextBox("TextBox_Cons", PlayerConsciousness)
 
     PlayerTonus = player['All Body Tonus']
-    HSTM_UI_ALT_HUD_Objects["TextBox_Tonus"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_Tonus"][2]
-        :format(
-            PlayerTonus)))
+    formatHUDTextBox("TextBox_Tonus", PlayerTonus)
 
     PlayerStamina = player['Stamina']
-    HSTM_UI_ALT_HUD_Objects["TextBox_Stamina"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names["TextBox_Stamina"][2]
-        :format(
-            PlayerStamina)))
+    formatHUDTextBox("TextBox_Stamina", PlayerStamina)
     --
     GameSpeed = cache.worldsettings['TimeDilation']
-    HSTM_UI_ALT_HUD_Objects["TextBox_GameSpeed"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-        ["TextBox_GameSpeed"][2]
-        :format(GameSpeed, tostring(SlowMotionEnabled))))
 
-    HSTM_UI_ALT_HUD_Objects["TextBox_NPCsFrozen"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-        ["TextBox_NPCsFrozen"][2]
-        :format(tostring(Frozen))))
+    formatHUDTextBox("TextBox_GameSpeed", GameSpeed, tostring(SlowMotionEnabled))
+
+    formatHUDTextBox("TextBox_NPCsFrozen", tostring(Frozen))
     --
     HUD_CacheProjectile()
 end
@@ -961,8 +955,7 @@ function ToggleSuperStrength()
     end
     Log("SuperStrength = " .. tostring(SuperStrength) .. "\n")
     if ModUIHUDVisible then
-        HSTM_UI_ALT_HUD_Objects["TextBox_SuperStrength"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-            ["TextBox_SuperStrength"][2]:format(tostring(SuperStrength))))
+        formatHUDTextBox("TextBox_SuperStrength", tostring(SuperStrength))
     end
 end
 
@@ -990,8 +983,7 @@ function ToggleInvulnerability()
     player['Invulnerable'] = Invulnerable
     Log("Invulnerable = " .. tostring(Invulnerable) .. "\n")
     if ModUIHUDVisible then
-        HSTM_UI_ALT_HUD_Objects["TextBox_Invulnerability"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-            ["TextBox_Invulnerability"][2]:format(tostring(Invulnerable))))
+        formatHUDTextBox("TextBox_Invulnerability", tostring(Invulnerable))
     end
 end
 
@@ -1308,14 +1300,14 @@ function HUD_SetLevel(Level)
     cache.map['Level'] = Level
     Logf("Set Level = %d\n", Level)
     if ModUIHUDVisible then
-        cache.ui_hud['HUD_Level_Value'] = Level
+        --cache.ui_hud['HUD_Level_Value'] = Level
     end
 end
 
 function HUD_CacheLevel()
     level = cache.map['Level']
     if ModUIHUDVisible then
-        cache.ui_hud['HUD_Level_Value'] = level
+        --cache.ui_hud['HUD_Level_Value'] = level
     end
 end
 
@@ -1343,9 +1335,7 @@ function HUD_SetPlayerTeam(PlayerTeam)
     player['Team Int'] = PlayerTeam
     Logf("Set Player Team = %d\n", PlayerTeam)
     if ModUIHUDVisible then
-        HSTM_UI_ALT_HUD_Objects["TextBox_Player_Team"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-            ["TextBox_Player_Team"]
-            [2]:format(PlayerTeam)))
+        formatHUDTextBox("TextBox_Player_Team", PlayerTeam)
     end
 end
 
@@ -1353,13 +1343,11 @@ function HUD_CachePlayerTeam()
     local player = GetActivePlayer()
     local PlayerTeam = player['Team Int']
     if ModUIHUDVisible then
-        HSTM_UI_ALT_HUD_Objects["TextBox_Player_Team"]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names
-            ["TextBox_Player_Team"]
-            [2]:format(PlayerTeam)))
+        formatHUDTextBox("TextBox_Player_Team", PlayerTeam)
     end
 end
 
--- We allow the player to choose between teams 0, 1, 2
+-- We allow the player to choose between teams 0 - 9
 function ChangePlayerTeamDown()
     HUD_CachePlayerTeam()
     if PlayerTeam > 0 then
@@ -1370,7 +1358,7 @@ end
 
 function ChangePlayerTeamUp()
     HUD_CachePlayerTeam()
-    if PlayerTeam < 2 then
+    if PlayerTeam < maxPlayerTeam then
         PlayerTeam = PlayerTeam + 1
         HUD_SetPlayerTeam(PlayerTeam)
     end
@@ -1428,7 +1416,7 @@ function FreezeAllNPCs()
     end)
 
     if ModUIHUDVisible then
-        cache.ui_hud['HUD_NPCsFrozen_Value'] = Frozen
+        formatHUDTextBox("TextBox_NPCsFrozen", tostring(Frozen))
     end
 end
 
@@ -1693,7 +1681,7 @@ function PopulateNPCTeamComboBox()
 
     ComboBox_NPC_Team:ClearOptions()
 
-    for TeamIndex = 0, 2 do
+    for TeamIndex = 0, maxPlayerTeam do
         ComboBox_NPC_Team:AddOption(tostring(TeamIndex))
     end
     ComboBox_NPC_Team:SetSelectedIndex(0)
@@ -1774,7 +1762,7 @@ function ToggleClassicSlowMotion()
         player['Slomo Timeline']['ReverseFromEnd']()
     end
     if ModUIHUDVisible then
-        cache.ui_hud['HUD_SlowMotion_Value'] = SlowMotionEnabled
+        formatHUDTextBox("TextBox_GameSpeed", GameSpeed, tostring(SlowMotionEnabled))
     end
 end
 
@@ -1789,8 +1777,7 @@ function ToggleSlowMotion()
     end
     worldsettings['TimeDilation'] = GameSpeed
     if ModUIHUDVisible then
-        cache.ui_hud['HUD_GameSpeed_Value']  = GameSpeed
-        cache.ui_hud['HUD_SlowMotion_Value'] = SlowMotionEnabled
+        formatHUDTextBox("TextBox_GameSpeed", GameSpeed, tostring(SlowMotionEnabled))
     end
 end
 
@@ -1807,7 +1794,7 @@ function IncreaseGameSpeed()
         GameSpeed = SloMoGameSpeed
         worldsettings['TimeDilation'] = GameSpeed
         if ModUIHUDVisible then
-            cache.ui_hud['HUD_GameSpeed_Value'] = GameSpeed
+            formatHUDTextBox("TextBox_GameSpeed", GameSpeed, tostring(SlowMotionEnabled))
         end
     end
 end
@@ -1824,7 +1811,7 @@ function DecreaseGameSpeed()
         GameSpeed = SloMoGameSpeed
         worldsettings['TimeDilation'] = GameSpeed
         if ModUIHUDVisible then
-            cache.ui_hud['HUD_GameSpeed_Value'] = GameSpeed
+            formatHUDTextBox("TextBox_GameSpeed", GameSpeed, tostring(SlowMotionEnabled))
         end
     end
 end
@@ -2145,13 +2132,14 @@ function HUD_CacheProjectile()
         --     projectileShortName = projectileShortName .. " (NPC menu)"
     end
     if ModUIHUDVisible then
-        HSTM_UI_ALT_HUD_Objects["TextBox_Projectile"]:SetText(
-            FText(
-                HSTM_UI_ALT_HUD_TextBox_Names
-                ["TextBox_Projectile"][2]
-                :format(projectileShortName)
-            )
-        )
+        -- HSTM_UI_ALT_HUD_Objects["TextBox_Projectile"]:SetText(
+        --     FText(
+        --         HSTM_UI_ALT_HUD_TextBox_Names
+        --         ["TextBox_Projectile"][2]
+        --         :format(projectileShortName)
+        --     )
+        -- )
+        formatHUDTextBox("TextBox_Projectile", projectileShortName)
     end
 end
 
@@ -2262,6 +2250,7 @@ function ResurrectWillie(player, forcePlayerController)
     player['DED'] = false
     player['Consciousness'] = 100.0
     player['All Body Tonus'] = 100.0
+    player['Stamina'] = 100.0
 
     player['Health'] = 100.0
 
@@ -2277,7 +2266,7 @@ function ResurrectWillie(player, forcePlayerController)
     player['Bleeding'] = 0.0
 
     -- Not sure if those functions do anything but let's call them just in case
-    player['Reset Dismemberment']()
+    --player['Reset Dismemberment']()
     player['Reset Sustained Damage']()
     if forcePlayerController then
         -- Possess this willie with a PlayerController instead of the last controller
@@ -2313,7 +2302,7 @@ function ResurrectPlayerByController()
 end
 
 ------------------------------------------------------------------------------
--- This has to be called when the DED screen is triggered, not before
+-- This has to be called when the DED screen/knock-out is triggered, not before
 function RemovePlayerOneDeathScreen()
     -- We don't use the caching of those objects just in case
     local HUD = FindFirstOf("UI_HUD_C")
@@ -2333,10 +2322,15 @@ function RemovePlayerOneDeathScreen()
         DED:RemoveFromViewport()
         -- DED:SetVisibility(Visibility_HIDDEN)
         Logf("Removing Death screen\n")
-        if GetGameplayStatics():IsGamePaused(GetWorldContextObject()) then
-            GetGameplayStatics():SetGamePaused(GetWorldContextObject(), false)
-            Logf("Unpausing game after death screen\n")
-        end
+    end
+    local KO = FindFirstOf("UI_KO_C")
+    if KO and KO:IsValid() then
+        KO:RemoveFromViewport()
+        Logf("Removing KO screen\n")
+    end
+    if GetGameplayStatics():IsGamePaused(GetWorldContextObject()) then
+        GetGameplayStatics():SetGamePaused(GetWorldContextObject(), false)
+        Logf("Unpausing game after death screen\n")
     end
 end
 

@@ -1,0 +1,82 @@
+# Half Sword Trainer Mod Keybinds Configuration
+# Format: action = key [,modifier1,modifier2,...]
+# Available keys: https://docs.ue4ss.com/lua-api/table-definitions/key.html
+# Available modifiers: SHIFT, CONTROL, ALT
+
+# Core toggles
+toggle_invulnerability = I
+toggle_superstrength = T
+
+# Loadout management  
+save_loadout = L,CONTROL
+spawn_loadout = L
+
+# Level control
+decrease_level = OEM_MINUS
+increase_level = OEM_PLUS
+
+# UI
+toggle_ui = U
+
+# Spawn controls
+spawn_armor = F1
+spawn_weapon = F2
+spawn_npc = F3
+spawn_object = F4
+undo_spawn = F5
+despawn_npcs = F6
+
+# NPC controls
+kill_npcs = K
+toggle_freeze = Z
+spawn_arena = B
+
+# Game speed controls
+toggle_slowmo = M
+toggle_slowmo_sprint = M,SHIFT
+decrease_speed = OEM_FOUR
+increase_speed = OEM_SIX
+decrease_speed_sprint = OEM_FOUR,SHIFT
+increase_speed_sprint = OEM_SIX,SHIFT
+
+# HUD
+toggle_crosshair = OEM_PERIOD
+
+# Movement
+jump = NUM_FIVE
+jump_sprint = NUM_FIVE,SHIFT
+jump_crouch = NUM_FIVE,CONTROL
+
+# Combat
+shoot = MIDDLE_MOUSE_BUTTON
+shoot_crouch = MIDDLE_MOUSE_BUTTON,CONTROL
+shoot_sprint = MIDDLE_MOUSE_BUTTON,SHIFT
+remove_armor = J
+
+# Projectile selection
+next_projectile = TAB
+prev_projectile = TAB,SHIFT
+
+# Death/Resurrection
+remove_death_screen = U,ALT
+resurrect = J,CONTROL
+
+# Possession
+possess_npc = END,CONTROL
+repossess_player = HOME,CONTROL
+
+# Movement
+dash_forward = NUM_EIGHT
+dash_back = NUM_TWO
+dash_left = NUM_FOUR
+dash_right = NUM_SIX
+
+# Game controls
+toggle_pause = MULTIPLY
+team_up = ADD
+team_down = SUBTRACT
+goto_me = F,CONTROL
+
+# Object manipulation
+despawn_target = DEL
+scale_target = DECIMAL 

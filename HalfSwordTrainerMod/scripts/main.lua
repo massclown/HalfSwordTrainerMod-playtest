@@ -13,6 +13,108 @@ local GetKismetSystemLibrary = UEHelpers.GetKismetSystemLibrary
 local GetKismetMathLibrary = UEHelpers.GetKismetMathLibrary
 local GetGameInstance = UEHelpers.GetGameInstance
 ------------------------------------------------------------------------------
+local keybinds = {}
+local default_keybinds = {
+    -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    -- !! No need to modify this table, just change the values in keybinds.txt!
+    -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    -- Format: action = {key, {modifiers}}
+    -- key names: https://docs.ue4ss.com/lua-api/table-definitions/key.html
+    -- modifiers: "CONTROL", "SHIFT", "ALT"
+    -- for multiple modifiers, use array, e.g. {"CONTROL", "SHIFT"}
+    -- for no modifiers, use empty array, e.g. {}
+    -- for the full list of keys, see UE4SS sources at
+    -- 
+    toggle_invulnerability = {"I", {}},
+    toggle_superstrength = {"T", {}},
+    save_loadout = {"L", {"CONTROL"}},
+    spawn_loadout = {"L", {}},
+    decrease_level = {"OEM_MINUS", {}}, 
+    increase_level = {"OEM_PLUS", {}},
+    toggle_ui = {"U", {}},
+    spawn_armor = {"F1", {}},
+    spawn_weapon = {"F2", {}},
+    spawn_npc = {"F3", {}},
+    spawn_object = {"F4", {}},
+    undo_spawn = {"F5", {}},
+    despawn_npcs = {"F6", {}},
+    kill_npcs = {"K", {}},
+    toggle_freeze = {"Z", {}},
+    spawn_arena = {"B", {}},
+    toggle_slowmo = {"M", {}},
+    toggle_slowmo_sprint = {"M", {"SHIFT"}},
+    decrease_speed = {"OEM_FOUR", {}},
+    increase_speed = {"OEM_SIX", {}},
+    decrease_speed_sprint = {"OEM_FOUR", {"SHIFT"}},
+    increase_speed_sprint = {"OEM_SIX", {"SHIFT"}},
+    toggle_crosshair = {"OEM_PERIOD", {}},
+    jump = {"NUM_FIVE", {}},
+    jump_sprint = {"NUM_FIVE", {"SHIFT"}},
+    jump_crouch = {"NUM_FIVE", {"CONTROL"}},
+    shoot = {"MIDDLE_MOUSE_BUTTON", {}},
+    shoot_crouch = {"MIDDLE_MOUSE_BUTTON", {"CONTROL"}},
+    shoot_sprint = {"MIDDLE_MOUSE_BUTTON", {"SHIFT"}},
+    remove_armor = {"J", {}},
+    next_projectile = {"TAB", {}},
+    prev_projectile = {"TAB", {"SHIFT"}},
+    remove_death_screen = {"U", {"ALT"}},
+    resurrect = {"J", {"CONTROL"}},
+    possess_npc = {"END", {"CONTROL"}},
+    repossess_player = {"HOME", {"CONTROL"}},
+    dash_forward = {"NUM_EIGHT", {}},
+    dash_back = {"NUM_TWO", {}},
+    dash_left = {"NUM_FOUR", {}}, 
+    dash_right = {"NUM_SIX", {}},
+    toggle_pause = {"MULTIPLY", {}},
+    team_up = {"ADD", {}},
+    team_down = {"SUBTRACT", {}},
+    goto_me = {"F", {"CONTROL"}},
+    despawn_target = {"DEL", {}},
+    scale_target = {"DECIMAL", {}}
+}
+------------------------------------------------------------------------------
+function LoadKeybinds()
+    local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\keybinds.txt", "r")
+    if not file then
+        -- If config doesn't exist, use defaults
+        keybinds = table.shallow_copy(default_keybinds)
+        return
+    end
+
+    keybinds = {}
+    for line in file:lines() do
+        -- Skip comments and empty lines
+        if not line:starts_with("#") and line:len() > 0 then
+            -- Parse line format: action = key [,modifier1,modifier2,...]
+            local action, binding = line:match("([%w_]+)%s*=%s*([%w_,]+)")
+            if action and binding then
+                local parts = {}
+                for part in binding:gmatch("[^,]+") do
+                    parts[#parts + 1] = part:match("^%s*(.-)%s*$") -- Trim whitespace
+                end
+                
+                if #parts > 0 then
+                    local key = parts[1]
+                    local modifiers = {}
+                    for i=2, #parts do
+                        modifiers[#modifiers + 1] = parts[i]
+                    end
+                    keybinds[action] = {key, modifiers}
+                end
+            end
+        end
+    end
+    
+    file:close()
+
+    -- Fill in any missing bindings with defaults
+    for action, binding in pairs(default_keybinds) do
+        if not keybinds[action] then
+            keybinds[action] = binding
+        end
+    end
+end
+
 -- Handle for the temporary HUD implementation in TempSetupCustomHUD
 local HSTM_UI_ALT_HUD = nil
 local HSTM_UI_ALT_HUD_TextBox_Names = {
@@ -531,7 +633,7 @@ function InitMyMod()
                 LoopAsync(250, function()
                     if myRestartCounter ~= globalRestartCount then
                         -- This is a loop initiated from a past restart hook, exit it
-                        Logf("Exiting HUD update loop leftover from restart #%d\n", myRestartCounter)
+                        Logf("Exiting HUD update loop leftover from restart #%d, we are in restart #%d now\n", myRestartCounter, globalRestartCount)
                         return true
                     end
                     -- if not ValidateCachedObjects() then
@@ -2675,281 +2777,169 @@ function AllCustomEventHooks()
 end
 
 ------------------------------------------------------------------------------
+-- This is a wrapper taking care of both UE4SS provided overloads while also allowing empty modifier table
+function RegisterCustomKeyBind(key, modifiers, callback)
+    if modifiers ~= nil and #modifiers > 0 then
+        RegisterKeyBind(key, modifiers, callback)
+    else
+        RegisterKeyBind(key, callback)
+    end
+end
+------------------------------------------------------------------------------
 -- The user-facing key bindings are below.
 -- Most are wrapped in a ExecuteInGameThread() call to not crash,
 -- the others have that wrapper inside them around the critical sections like spawning
+-- Some keybinds have to be specified with Ctrl and/or Shift modifiers,
+-- otherwise they won't work while sprinting or crouching
 function AllKeybindHooks()
-    RegisterKeyBind(Key.I, function()
-        ExecuteInGameThread(function()
-            ToggleInvulnerability()
-        end)
-    end)
+    -- Load keybinds from config
+    LoadKeybinds()
 
-    RegisterKeyBind(Key.T, function()
-        ExecuteInGameThread(function()
-            ToggleSuperStrength()
-        end)
-    end)
+    -- Register each keybind
+    for action, binding in pairs(keybinds) do
+        local key = Key[binding[1]]
+        local modifiers = {}
+        for _, modifier in ipairs(binding[2]) do
+            table.insert(modifiers, ModifierKey[modifier])
+        end
 
-    RegisterKeyBind(Key.L, { ModifierKey.CONTROL }, function()
-        SaveLoadout()
-    end)
-
-    RegisterKeyBind(Key.L, function()
-        SpawnLoadoutAroundPlayer()
-    end)
-
-
-    RegisterKeyBind(Key.OEM_MINUS, function()
-        ExecuteInGameThread(function()
-            DecreaseLevel()
-        end)
-    end)
-
-    RegisterKeyBind(Key.OEM_PLUS, function()
-        ExecuteInGameThread(function()
-            IncreaseLevel()
-        end)
-    end)
-
-    RegisterKeyBind(Key.U, function()
-        ExecuteInGameThread(function()
-            ToggleModUI()
-        end)
-    end)
-
-    RegisterKeyBind(Key.F1, function()
-        SpawnSelectedArmor()
-    end)
-
-    RegisterKeyBind(Key.F2, function()
-        SpawnSelectedWeapon()
-    end)
-
-    RegisterKeyBind(Key.F3, function()
-        SpawnSelectedNPC()
-    end)
-
-    RegisterKeyBind(Key.F4, function()
-        SpawnSelectedObject()
-    end)
-
-    RegisterKeyBind(Key.F5, function()
-        UndoLastSpawn()
-    end)
-
-    RegisterKeyBind(Key.F6, function()
-        DespawnAllNPCs()
-    end)
-
-    RegisterKeyBind(Key.K, function()
-        ExecuteInGameThread(function()
-            KillAllNPCs()
-        end)
-    end)
-
-    RegisterKeyBind(Key.Z, function()
-        ExecuteInGameThread(function()
-            FreezeAllNPCs()
-        end)
-    end)
-
-    RegisterKeyBind(Key.B, function()
-        ExecuteInGameThread(function()
-            SpawnBossArena()
-        end)
-    end)
-
-    RegisterKeyBind(Key.M, function()
-        ExecuteInGameThread(function()
-            ToggleSlowMotion()
-        end)
-    end)
-
-    RegisterKeyBind(Key.M, { ModifierKey.SHIFT }, function()
-        ExecuteInGameThread(function()
-            ToggleSlowMotion()
-        end)
-    end)
-
-    -- OEM_FOUR == [
-    RegisterKeyBind(Key.OEM_FOUR, function()
-        ExecuteInGameThread(function()
-            DecreaseGameSpeed()
-        end)
-    end)
-    -- OEM_SIX == ]
-    RegisterKeyBind(Key.OEM_SIX, function()
-        ExecuteInGameThread(function()
-            IncreaseGameSpeed()
-        end)
-    end)
-
-    -- OEM_FOUR == [
-    RegisterKeyBind(Key.OEM_FOUR, { ModifierKey.SHIFT }, function()
-        ExecuteInGameThread(function()
-            DecreaseGameSpeed()
-        end)
-    end)
-    -- OEM_SIX == ]
-    RegisterKeyBind(Key.OEM_SIX, { ModifierKey.SHIFT }, function()
-        ExecuteInGameThread(function()
-            IncreaseGameSpeed()
-        end)
-    end)
-
-    RegisterKeyBind(Key.OEM_PERIOD, function()
-        ExecuteInGameThread(function()
-            ToggleCrosshair()
-        end)
-    end)
-
-    RegisterKeyBind(Key.NUM_FIVE, function()
-        ExecuteInGameThread(function()
-            PlayerJump()
-        end)
-    end)
-    -- Also make sure we can still jump while sprinting with Shift held down
-    RegisterKeyBind(Key.NUM_FIVE, { ModifierKey.SHIFT }, function()
-        ExecuteInGameThread(function()
-            PlayerJump()
-        end)
-    end)
-
-    RegisterKeyBind(Key.NUM_FIVE, { ModifierKey.CONTROL }, function()
-        ExecuteInGameThread(function()
-            PlayerJump()
-        end)
-    end)
-
-    RegisterKeyBind(Key.MIDDLE_MOUSE_BUTTON, function()
-        ExecuteInGameThread(function()
-            ShootProjectile()
-        end)
-    end)
-
-    RegisterKeyBind(Key.MIDDLE_MOUSE_BUTTON, { ModifierKey.CONTROL }, function()
-        ExecuteInGameThread(function()
-            ShootProjectile()
-        end)
-    end)
-
-    RegisterKeyBind(Key.J, function()
-        ExecuteInGameThread(function()
-            RemovePlayerArmor()
-        end)
-    end)
-
-    -- Example of changing the fog color of the abyss
-    -- RegisterKeyBind(Key.J, function()
-    --     ExecuteInGameThread(function()
-    --         local fog = FindFirstOf("ExponentialHeightFogComponent")
-    --         fog:SetFogInscatteringColor({R=0.05, G=0.0, B=0.0})
-    --     end)
-    -- end)
-
-    -- Not sure why, but holding down SHIFT still triggers the other hooks, so let's not double things up
-    -- RegisterKeyBind(Key.MIDDLE_MOUSE_BUTTON, { ModifierKey.SHIFT }, function()
-    --     ExecuteInGameThread(function()
-    --         ShootProjectile()
-    --     end)
-    -- end)
-
-    RegisterKeyBind(Key.TAB, function()
-        ChangeProjectileNext()
-    end)
-
-    -- Also make sure we can still shoot while sprinting with Shift held down
-    RegisterKeyBind(Key.MIDDLE_MOUSE_BUTTON, { ModifierKey.SHIFT }, function()
-        ExecuteInGameThread(function()
-            ShootProjectile()
-        end)
-    end)
-
-    RegisterKeyBind(Key.TAB, { ModifierKey.SHIFT }, function()
-        ChangeProjectilePrev()
-    end)
-
-    RegisterKeyBind(Key.U, { ModifierKey.ALT }, function()
-        RemovePlayerOneDeathScreen()
-    end)
-
-    RegisterKeyBind(Key.J, { ModifierKey.CONTROL }, function()
-        ExecuteInGameThread(function()
-            --ResurrectPlayer()
-            -- Attempt to resurrect the Willie that is currently possessed by the Player, not the OG Willie
-            ResurrectPlayerByController()
-        end)
-    end)
-
-    RegisterKeyBind(Key.END, { ModifierKey.CONTROL }, function()
-        PossessNearestNPC()
-    end)
-
-    RegisterKeyBind(Key.HOME, { ModifierKey.CONTROL }, function()
-        RepossessPlayer()
-    end)
-
-    RegisterKeyBind(Key.NUM_EIGHT, function()
-        ExecuteInGameThread(function()
-            PlayerDash(DASH_FORWARD)
-        end)
-    end)
-
-    RegisterKeyBind(Key.NUM_TWO, function()
-        ExecuteInGameThread(function()
-            PlayerDash(DASH_BACK)
-        end)
-    end)
-
-    RegisterKeyBind(Key.NUM_FOUR, function()
-        ExecuteInGameThread(function()
-            PlayerDash(DASH_LEFT)
-        end)
-    end)
-
-    RegisterKeyBind(Key.NUM_SIX, function()
-        ExecuteInGameThread(function()
-            PlayerDash(DASH_RIGHT)
-        end)
-    end)
-
-    RegisterKeyBind(Key.MULTIPLY, function()
-        ExecuteInGameThread(function()
-            ToggleGamePaused()
-            --ToggleFreeCamera()
-        end)
-    end)
-
-    RegisterKeyBind(Key.ADD, function()
-        ExecuteInGameThread(function()
-            ChangePlayerTeamUp()
-        end)
-    end)
-
-    RegisterKeyBind(Key.SUBTRACT, function()
-        ExecuteInGameThread(function()
-            ChangePlayerTeamDown()
-        end)
-    end)
-
-    RegisterKeyBind(Key.F, { ModifierKey.CONTROL }, function()
-        ExecuteInGameThread(function()
-            GoToMe()
-        end)
-    end)
-
-    RegisterKeyBind(Key.DEL, function()
-        ExecuteInGameThread(function()
-            DespawnObjectFromPlayerCamera()
-        end)
-    end)
-
-    RegisterKeyBind(Key.DECIMAL, function()
-        ExecuteInGameThread(function()
-            ScaleObjectUnderCamera()
-        end)
-    end)
+        -- Handle each action
+        if action == "toggle_invulnerability" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ToggleInvulnerability() end)
+            end)
+        elseif action == "toggle_superstrength" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ToggleSuperStrength() end)
+            end)
+        elseif action == "save_loadout" then
+            RegisterCustomKeyBind(key, modifiers, SaveLoadout)
+        elseif action == "spawn_loadout" then
+            RegisterCustomKeyBind(key, modifiers, SpawnLoadoutAroundPlayer)
+        elseif action == "decrease_level" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() DecreaseLevel() end)
+            end)
+        elseif action == "increase_level" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() IncreaseLevel() end)
+            end)
+        elseif action == "toggle_ui" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ToggleModUI() end)
+            end)
+        elseif action == "spawn_armor" then
+            RegisterCustomKeyBind(key, modifiers, SpawnSelectedArmor)
+        elseif action == "spawn_weapon" then
+            RegisterCustomKeyBind(key, modifiers, SpawnSelectedWeapon)
+        elseif action == "spawn_npc" then
+            RegisterCustomKeyBind(key, modifiers, SpawnSelectedNPC)
+        elseif action == "spawn_object" then
+            RegisterCustomKeyBind(key, modifiers, SpawnSelectedObject)
+        elseif action == "undo_spawn" then
+            RegisterCustomKeyBind(key, modifiers, UndoLastSpawn)
+        elseif action == "despawn_npcs" then
+            RegisterCustomKeyBind(key, modifiers, DespawnAllNPCs)
+        elseif action == "kill_npcs" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() KillAllNPCs() end)
+            end)
+        elseif action == "toggle_freeze" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() FreezeAllNPCs() end)
+            end)
+        elseif action == "spawn_arena" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() SpawnBossArena() end)
+            end)
+        elseif action == "toggle_slowmo" or action == "toggle_slowmo_sprint" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ToggleSlowMotion() end)
+            end)
+        elseif action == "decrease_speed" or action == "decrease_speed_sprint" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() DecreaseGameSpeed() end)
+            end)
+        elseif action == "increase_speed" or action == "increase_speed_sprint" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() IncreaseGameSpeed() end)
+            end)
+        elseif action == "toggle_crosshair" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ToggleCrosshair() end)
+            end)
+        -- Also make sure we can still jump while sprinting with Shift, or crouching with Ctrl held down
+        elseif action == "jump" or action == "jump_sprint" or action == "jump_crouch" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() PlayerJump() end)
+            end)
+        -- Also make sure we can still shoot while sprinting with Shift or crouching with Ctrl held down
+        elseif action == "shoot" or action == "shoot_sprint" or action == "shoot_crouch" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ShootProjectile() end)
+            end)
+        elseif action == "remove_armor" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() RemovePlayerArmor() end)
+            end)
+        elseif action == "next_projectile" then
+            RegisterCustomKeyBind(key, modifiers, ChangeProjectileNext)
+        elseif action == "prev_projectile" then
+            RegisterCustomKeyBind(key, modifiers, ChangeProjectilePrev)
+        elseif action == "remove_death_screen" then
+            RegisterCustomKeyBind(key, modifiers, RemovePlayerOneDeathScreen)
+        elseif action == "resurrect" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ResurrectPlayerByController() end)
+            end)
+        elseif action == "possess_npc" then
+            RegisterCustomKeyBind(key, modifiers, PossessNearestNPC)
+        elseif action == "repossess_player" then
+            RegisterCustomKeyBind(key, modifiers, RepossessPlayer)
+        elseif action == "dash_forward" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() PlayerDash(DASH_FORWARD) end)
+            end)
+        elseif action == "dash_back" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() PlayerDash(DASH_BACK) end)
+            end)
+        elseif action == "dash_left" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() PlayerDash(DASH_LEFT) end)
+            end)
+        elseif action == "dash_right" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() PlayerDash(DASH_RIGHT) end)
+            end)
+        elseif action == "toggle_pause" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ToggleGamePaused() end)
+            end)
+        elseif action == "team_up" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ChangePlayerTeamUp() end)
+            end)
+        elseif action == "team_down" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ChangePlayerTeamDown() end)
+            end)
+        elseif action == "goto_me" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() GoToMe() end)
+            end)
+        elseif action == "despawn_target" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() DespawnObjectFromPlayerCamera() end)
+            end)
+        elseif action == "scale_target" then
+            RegisterCustomKeyBind(key, modifiers, function()
+                ExecuteInGameThread(function() ScaleObjectUnderCamera() end)
+            end)
+        else
+            ErrLogf("Unknown keybind action: %s\n", action)
+        end
+    end
 
     Log("Keybinds registered\n")
 end

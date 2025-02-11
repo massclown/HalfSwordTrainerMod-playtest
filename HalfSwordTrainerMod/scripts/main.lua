@@ -138,7 +138,7 @@ function LoadKeybinds()
     keybinds = {}
     for line in file:lines() do
         -- Skip comments and empty lines
-        if not line:starts_with("#") and line:len() > 0 then
+        if not line:match("^%s*#") and not line:match("^%s*$") then
             -- Remove any trailing comments
             line = line:gsub("%s*#.*$", "")
             -- Parse line format: action = key [,modifier1,modifier2,...]
@@ -1207,7 +1207,7 @@ function LoadCustomLoadout()
         Logf("Loading custom loadout...\n")
         for line in file:lines() do
             -- skip commented lines
-            if not line:starts_with('[BAD]') then
+            if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
                 local _, _, scale, class = string.find(line, "%(([%d%.]+)%)([/%w_%.]+)$")
                 -- Blade-only scaling is passed through to the loadout table as a flag
                 local blade = line:starts_with('[BladeOnly]')
@@ -1782,7 +1782,7 @@ function PopulateArmorComboBox()
         ComboBox_Armor:ClearOptions()
         local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_armor.txt", "r");
         for line in file:lines() do
-            if not line:starts_with('[BAD]') then
+            if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
                 local fkey = ExtractHumanReadableNameShorter(line)
                 all_armor[fkey] = line
                 --Logf("%s: %s\n", fkey, line)
@@ -1802,7 +1802,7 @@ function PopulateWeaponComboBox()
 
         local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_weapons.txt", "r");
         for line in file:lines() do
-            if not line:starts_with('[BAD]') then
+            if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
                 local fkey = ExtractHumanReadableNameShorter(line)
                 all_weapons[fkey] = line
                 --Logf("%s: %s\n", fkey, line)
@@ -1821,7 +1821,7 @@ function PopulateNPCComboBox()
 
     local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_characters.txt", "r");
     for line in file:lines() do
-        if not line:starts_with('[BAD]') then
+        if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
             local fkey = ExtractHumanReadableNameShorter(line)
             all_characters[fkey] = line
             -- ComboBox_NPC:AddOption(fkey)
@@ -1848,7 +1848,7 @@ function PopulateObjectComboBox()
 
     local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_objects.txt", "r");
     for line in file:lines() do
-        if not line:starts_with('[BAD]') then
+        if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
             local fkey = ExtractHumanReadableNameShorter(line)
             all_objects[fkey] = line
             -- ComboBox_Object:AddOption(fkey)

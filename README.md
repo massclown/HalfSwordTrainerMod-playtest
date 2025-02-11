@@ -39,6 +39,58 @@ https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1
 
 ![Alt text](images/hud_playtest_v0.10_2K.jpg?raw=true "Screenshot of mod UI v0.10")
 
+# Configuration of this mod
+
+## Config file
+The config file is located at: `ue4ss\Mods\HalfSwordTrainerMod\config.txt` in your game installation folder.
+
+You can modify the following settings in the config file:
+
+- `ui_visible_on_start`: Whether the HUD is visible when starting the game (default: true). Set to false to hide the mod UI on start
+- `max_rsr`: Maximum Running Speed Rate stat value (default: 1000)
+- `max_mp`: Maximum Muscle Power stat value (default: 200)
+- `max_regen_rate`: Maximum regeneration rate (default: 10000)
+- `slo_mo_game_speed`: Game speed when slow motion is enabled for the first time (default: 0.5)
+- `spawn_offset_x_npc`: How far NPCs spawn from player in X direction (default: 800.0)
+- `spawn_offset_x_object`: How far objects spawn from player in X direction (default: 300.0)
+- `projectile_base_force_multiplier`: Base force multiplier for projectiles (default: 100)
+- `jump_impulse`: Force applied when jumping normally (default: 25000)
+- `jump_impulse_fallen`: Force applied when jumping while fallen (default: 1000)
+- `dash_forward_impulse`: Force applied when dashing forward (default: 15000.0)
+- `dash_back_impulse`: Force applied when dashing backward (default: 12000.0)
+- `dash_left_impulse`: Force applied when dashing left (default: 40000.0)
+- `dash_right_impulse`: Force applied when dashing right (default: 40000.0)
+
+The config file uses a simple key = value format. Lines starting with # are comments and are ignored.
+For example, to hide the mod UI on start:
+```
+ui_visible_on_start = false
+```
+
+If the config file doesn't exist, the mod will use the default values listed above. 
+
+## Custom keybinds file
+The keybinds file is located at: `ue4ss\Mods\HalfSwordTrainerMod\keybinds.txt` in your game installation folder.
+
+You can customize the keyboard shortcuts by editing this file. 
+
+Don't rebind the mod's functions on top of the game's own keybinds, things will break!
+
+The file uses the following format:
+```
+action = key[,modifier1,modifier2,...]
+```
+
+Where:
+- action: The name of the action to bind
+- key: The key name (see https://docs.ue4ss.com/lua-api/table-definitions/key.html)
+- modifiers: Optional comma-separated list of modifiers (CONTROL, SHIFT, ALT)
+
+For example:
+`toggle_invulnerability = F11`
+
+If the keybinds file doesn't exist, the mod will use the default values listed in the keybinds table below. 
+
 # Known issues and limitations and changes from trainer mod for Demo 
 * Unfortunately **there is almost no user interface**, just use the [keybinds](https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#keyboard-shortcuts-of-this-mod) and check the UE4SS logs (`Ctrl+O`) if something goes wrong. 
 * Most of the functionality from the regular trainer mod may still work (or not)

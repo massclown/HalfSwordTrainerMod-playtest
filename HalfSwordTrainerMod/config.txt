@@ -1,0 +1,29 @@
+# Half Sword Trainer Mod Configuration
+
+# UI Settings
+ui_visible_on_start = true
+
+# Player Stats
+max_rsr = 1000              # Maximum Running Speed Rate
+max_mp = 200                # Maximum Muscle Power
+max_regen_rate = 10000      # Maximum Regeneration Rate
+
+# Game Speed Settings
+slo_mo_game_speed = 0.5     # Slow Motion Game Speed
+
+# Spawn Settings
+spawn_offset_x_npc = 800.0    # NPC spawn distance from player
+spawn_offset_x_object = 300.0 # Object spawn distance from player
+
+# Combat Settings
+projectile_base_force_multiplier = 100 # Base force for projectiles
+
+# Movement Settings
+jump_impulse = 25000          # Normal jump force
+jump_impulse_fallen = 1000    # Jump force when fallen
+
+# Dash Settings
+dash_forward_impulse = 15000.0  # Forward dash force
+dash_back_impulse = 12000.0     # Backward dash force
+dash_left_impulse = 40000.0     # Left dash force
+dash_right_impulse = 40000.0    # Right dash force 

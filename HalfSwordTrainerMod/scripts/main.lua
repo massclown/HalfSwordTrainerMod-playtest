@@ -1,9 +1,9 @@
--- Half Sword Trainer Mod v0.11 by massclown for Half Sword Playtest only
+-- Half Sword Trainer Mod v0.12 by massclown for Half Sword Playtest only
 -- https://github.com/massclown/HalfSwordTrainerMod-playtest
 -- Requirements: LATEST EXPERIMENTAL UE4SS build from github after November 2024, e.g.
 -- https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1-234-g4fc8691.zip
 ------------------------------------------------------------------------------
-local mod_version = "0.11"
+local mod_version = "0.12"
 ------------------------------------------------------------------------------
 local maf = require 'maf'
 local UEHelpers = require("UEHelpers")
@@ -12,6 +12,61 @@ local GetWorldContextObject = UEHelpers.GetWorldContextObject
 local GetKismetSystemLibrary = UEHelpers.GetKismetSystemLibrary
 local GetKismetMathLibrary = UEHelpers.GetKismetMathLibrary
 local GetGameInstance = UEHelpers.GetGameInstance
+------------------------------------------------------------------------------
+local config = {}
+local default_config = {
+    -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    -- !! No need to modify this table, just change the values in config.txt!
+    -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ui_visible_on_start = true,
+    max_rsr = 1000,
+    max_mp = 200,
+    max_regen_rate = 10000,
+    slo_mo_game_speed = 0.5,
+    spawn_offset_x_npc = 800.0,
+    spawn_offset_x_object = 300.0,
+    projectile_base_force_multiplier = 100,
+    jump_impulse = 25000,
+    jump_impulse_fallen = 1000,
+    dash_forward_impulse = 15000.0,
+    dash_back_impulse = 12000.0,
+    dash_left_impulse = 40000.0,
+    dash_right_impulse = 40000.0,
+}
+------------------------------------------------------------------------------
+-- Load config from config.txt file
+local function LoadConfig()
+    -- Start with default config values
+    config = {}
+    -- Try to open config file
+    local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\config.txt", "r")
+    if not file then
+        config = table.shallow_copy(default_config)
+        return
+    end
+
+    -- Read and evaluate each line
+    for line in file:lines() do
+        -- Skip empty lines and full comment lines
+        if not line:match("^%s*#") and not line:match("^%s*$") then
+            -- Remove any trailing comments
+            line = line:gsub("%s*#.*$", "")
+            -- Extract key and value
+            local key, value = line:match("([%w_]+)%s*=%s*(.+)")
+            if key and value then
+                if default_config[key] ~= nil then
+                    -- Yes, this is bad but short and works fine
+                    local fn, err = load("return " .. value)
+                    if fn then
+                        config[key] = fn()
+                    end
+                end
+            end
+        end
+    end
+
+    file:close()
+end
 ------------------------------------------------------------------------------
 local keybinds = {}
 local default_keybinds = {
@@ -23,7 +78,6 @@ local default_keybinds = {
     -- modifiers: "CONTROL", "SHIFT", "ALT"
     -- for multiple modifiers, use array, e.g. {"CONTROL", "SHIFT"}
     -- for no modifiers, use empty array, e.g. {}
-    -- for the full list of keys, see UE4SS sources at
     -- 
     toggle_invulnerability = {"I", {}},
     toggle_superstrength = {"T", {}},
@@ -85,6 +139,8 @@ function LoadKeybinds()
     for line in file:lines() do
         -- Skip comments and empty lines
         if not line:starts_with("#") and line:len() > 0 then
+            -- Remove any trailing comments
+            line = line:gsub("%s*#.*$", "")
             -- Parse line format: action = key [,modifier1,modifier2,...]
             local action, binding = line:match("([%w_]+)%s*=%s*([%w_,]+)")
             if action and binding then
@@ -154,14 +210,10 @@ local savedRSR = 0
 local savedMP = 0
 local savedRegenRate = 0
 -- Our buffed stats that we set
-local maxRSR = 1000
-local maxMP = 200
-local maxRegenRate = 10000
 ------------------------------------------------------------------------------
 local GameSpeedDelta = 0.1
 local DefaultGameSpeed = 1.0
-local DefaultSloMoGameSpeed = 0.5
-local SloMoGameSpeed = DefaultSloMoGameSpeed
+local SloMoGameSpeed = default_config.slo_mo_game_speed
 ------------------------------------------------------------------------------
 -- Variables tracking things we change or want to observe and display in HUD
 local AutoSpawnEnabled = true          -- this is the default, UI is 'HSTM_Flag_AutospawnNPCs'
@@ -195,9 +247,6 @@ local WeaponScaleY = true
 local WeaponScaleZ = true
 local WeaponScaleBladeOnly = false
 local ScaleObjects = false
-
-local SpawnOffsetXNPC = 800.0
-local SpawnOffsetXObject = 300.0
 
 -- Player body detailed health data
 local HH = 0  -- 'Head Health'
@@ -873,6 +922,10 @@ function TempSetupCustomHUD()
         -- slot:SetMinimum({X = 1.0, Y = 0.0})
         -- slot:SetMaximum({X = 1.0, Y = 1.0})
         --HSTM_UI_ALT_HUD:SetVisibility(Visibility_SELFHITTESTINVISIBLE)
+
+        if not config.ui_visible_on_start then
+            ToggleModUI()
+        end
     end
 end
 
@@ -1047,8 +1100,8 @@ function ToggleSuperStrength()
     if SuperStrength then
         savedRSR = player['Running Speed Rate']
         savedMP = player['Muscle Power']
-        player['Running Speed Rate'] = maxRSR
-        player['Muscle Power'] = maxMP
+        player['Running Speed Rate'] = config.max_rsr
+        player['Muscle Power'] = config.max_mp
         -- Activating stamina refresher loop
         SuperStaminaLoop()
     else
@@ -1071,7 +1124,7 @@ function ToggleInvulnerability()
     Invulnerable = not Invulnerable
     if Invulnerable then
         savedRegenRate = player['Regen Rate']
-        player['Regen Rate'] = maxRegenRate
+        player['Regen Rate'] = config.max_regen_rate
         -- Activating stamina refresher loop
         SuperStaminaLoop()
         -- Attempt to undo some of the damage done before to the player and the body model
@@ -1332,7 +1385,7 @@ function SpawnLoadoutAroundPlayer()
     local spawnDeltaDelay = 300 -- in milliseconds
     local PlayerLocation = GetPlayerLocation()
     local PlayerRotation = GetPlayerViewRotation()
-    local DeltaLocation = maf.vec3(SpawnOffsetXObject, 0.0, 200.0)
+    local DeltaLocation = maf.vec3(config.spawn_offset_x_object, 0.0, 200.0)
 
     local rotatedDelta = DeltaLocation
     local loadout = default_loadout
@@ -1670,7 +1723,7 @@ function SpawnSelectedNPC()
     local selected_actor = "/Game/Character/Blueprints/Willie_BP.Willie_BP_C"
     --    local selected_actor = "/Game/Character/Blueprints/Willie_BP_DressUp.Willie_BP_DressUp_C"
     Logf("Spawning NPC [%s]\n", selected_actor)
-    SpawnActorInFrontOfPlayer(selected_actor, { X = SpawnOffsetXNPC, Y = 0.0, Z = 50.0 }, true)
+    SpawnActorInFrontOfPlayer(selected_actor, { X = config.spawn_offset_x_npc, Y = 0.0, Z = 50.0 }, true)
     --    end
 end
 
@@ -1693,7 +1746,7 @@ function SpawnSelectedObject()
 
     Logf("Spawning object [%s]\n", selected_actor)
     -- TODO the -60 in Z offset comes from player's camera elevation, I believe?
-    local thisSpawnOffset = { X = SpawnOffsetXObject, Y = 0.0, Z = -60.0 }
+    local thisSpawnOffset = { X = config.spawn_offset_x_object, Y = 0.0, Z = -60.0 }
     if WeaponScaleMultiplier ~= 1.0 then
         local scale = {
             X = WeaponScaleX and WeaponScaleMultiplier or 1.0,
@@ -1937,7 +1990,7 @@ function PlayerJump()
 
     if player['Fallen'] and not forceJump then
         -- TODO what if the player is laying down? Currently we do a small boost just in case
-        local jumpImpulse = 1000.0 --* GameSpeed
+        local jumpImpulse = config.jump_impulse_fallen --* GameSpeed
         mesh:AddImpulse({ X = 0.0, Y = 0.0, Z = jumpImpulse }, FName("None"), true)
     else
         -- Only jump if the last jump happened long enough ago
@@ -1945,7 +1998,7 @@ function PlayerJump()
             -- Update last successful jump timestamp
             lastJumpTimestamp = curJumpTimestamp
             -- The jump impulse value has been selected to jump high enough for a table or boss fence
-            local jumpImpulse = 25000.0 --* GameSpeed
+            local jumpImpulse = config.jump_impulse --* GameSpeed
             mesh:AddImpulse({ X = 0.0, Y = 0.0, Z = jumpImpulse }, FName("None"), true)
         end
     end
@@ -1974,7 +2027,7 @@ function PlayerDash(direction)
     -- The liftoff angles for the dash compensate for the ground friction and legs grappling the ground, hopefully
     local liftoffAnglesDeg = { [DASH_FORWARD] = 15.0, [DASH_BACK] = 15.0, [DASH_LEFT] = 30.0, [DASH_RIGHT] = 30.0 }
     -- The dash forces have been tuned to provide a decent movement while not tripping the player (hopefully)
-    local dashForces = { [DASH_FORWARD] = 15000.0, [DASH_BACK] = 12000.0, [DASH_LEFT] = 40000.0, [DASH_RIGHT] = 40000.0 }
+    local dashForces = { [DASH_FORWARD] = config.dash_forward_impulse, [DASH_BACK] = config.dash_back_impulse, [DASH_LEFT] = config.dash_left_impulse, [DASH_RIGHT] = config.dash_right_impulse }
 
     local direction_rotator = maf.rotation.fromAngleAxis(
         angles[direction] / 2.0,
@@ -2036,15 +2089,15 @@ local DEFAULT_NPC_PROJECTILE = "/CURRENTLY_SELECTED_NPC.CURRENTLY_SELECTED_NPC_D
 
 -- The first and the last projectiles in this list are special cases that launch the currently selected weapon and NPC from the menus, respectively
 local projectiles = {
-    { DEFAULT_PROJECTILE,                                                                                            { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 100 },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Reforged/ModularWeaponBP_Spear_B.ModularWeaponBP_Spear_B_C",    { X = 0.5, Y = 0.5, Z = 0.5 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 100 },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Pitchfork_A.BP_Weapon_Tool_Pitchfork_A_C", { X = 0.5, Y = 0.5, Z = 0.5 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 150 },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_Dagger.ModularWeaponBP_Dagger_C",               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 50 },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Axe_C.BP_Weapon_Tool_Axe_C_C",             { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 180.0, Roll = 0.0 }, 50 },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Improvized/BP_Weapon_Improv_Stool.BP_Weapon_Improv_Stool_C",    { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 150 },
-    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Shield_Buckler.Shield_Buckler_C",                               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 150 },
+    { DEFAULT_PROJECTILE,                                                                                            { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 1.00 },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Reforged/ModularWeaponBP_Spear_B.ModularWeaponBP_Spear_B_C",    { X = 0.5, Y = 0.5, Z = 0.5 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 1.00 },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Pitchfork_A.BP_Weapon_Tool_Pitchfork_A_C", { X = 0.5, Y = 0.5, Z = 0.5 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 1.50 },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/ModularWeaponBP_Dagger.ModularWeaponBP_Dagger_C",               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 0.50 },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Axe_C.BP_Weapon_Tool_Axe_C_C",             { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 180.0, Roll = 0.0 }, 0.50 },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Improvized/BP_Weapon_Improv_Stool.BP_Weapon_Improv_Stool_C",    { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 1.50 },
+    { "/Game/Assets/Weapons/Blueprints/Built_Weapons/Shield_Buckler.Shield_Buckler_C",                               { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }, 1.50 },
     -- Not a good idea at the moment, NPCs spawn and hang for some time, so they don't fly at all
-    --{ DEFAULT_NPC_PROJECTILE,                                                                                        { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   500 },
+    --{ DEFAULT_NPC_PROJECTILE,                                                                                        { X = 1.0, Y = 1.0, Z = 1.0 }, { Pitch = 0.0, Yaw = 0.0, Roll = 0.0 },   5.00 },
 }
 
 -- The projectile shooting logic attempts to take into account various manual corrections
@@ -2183,7 +2236,7 @@ function ShootProjectile()
 
     -- We don't compensate for game speed to make projectiles a bit stronger in slow-mo
     local impulseMaf = ImpulseRotation
-    local impulse = impulseMaf * forceMultiplier
+    local impulse = impulseMaf * (forceMultiplier * config.projectile_base_force_multiplier)
     local impulseUE = maf2vec(impulse)
     -- Don't apply impulse immediately, give the player a chance to see the projectile
     ExecuteWithDelay(200, function()
@@ -2947,6 +3000,9 @@ end
 ------------------------------------------------------------------------------
 -- The logic below attempts to check if the environment is OK to run in
 function SanityCheckAndInit()
+
+    LoadConfig()
+
     local UE4SS_Major, UE4SS_Minor, UE4SS_Hotfix = UE4SS.GetVersion()
     local UE4SS_Version_String = string.format("%d.%d.%d", UE4SS_Major, UE4SS_Minor, UE4SS_Hotfix)
 

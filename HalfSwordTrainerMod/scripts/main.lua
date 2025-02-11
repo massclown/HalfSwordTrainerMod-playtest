@@ -1035,8 +1035,8 @@ function HUD_UpdatePlayerStats_Playtest()
         ErrLogf("Player not found, skipping\n")
         return
     end
-    PlayerTeam   = player['Team Int']
-    PlayerHealth = player['Health']
+    PlayerTeam   = tonumber(player['Team Int'])
+    PlayerHealth = tonumber(player['Health'])
     Invulnerable = player['Invulnerable']
 
     formatHUDTextBox("TextBox_Player_Team", PlayerTeam)
@@ -1345,16 +1345,24 @@ end
 ------------------------------------------------------------------------------
 -- This takes possession into account
 function GetActivePlayer()
+    local player
     local FirstPlayerController = myGetPlayerController()
     -- TODO maybe this is not a great idea
     if not FirstPlayerController then
         if cache.map then
             --            return cache.map['Player Willie']
-            return cache.map['Player (Temp)']
+            player = cache.map['Player (Temp)']
+            if player:IsValid() then
+                return player
+            end
         end
         return nil
     end
-    return FirstPlayerController.Pawn
+    player = FirstPlayerController.Pawn
+    if player:IsValid() then
+        return player
+    end
+    return nil
 end
 
 ------------------------------------------------------------------------------

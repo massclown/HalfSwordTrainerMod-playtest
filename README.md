@@ -35,6 +35,45 @@ https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1
 
 5) follow the rest of the procedure with the above changes in mind.
 
+# Keyboard shortcuts of this mod
+
+| Shortcut           | Description        |
+| ------------------ | ------------------ |
+| `U`                | Show/hide the UI (HUD) of the mod |
+| `Alt + U`          | Skip the death screen (only when dead) |
+| `Ctrl + J`         | Try to resurrect the player (only when dead) |
+| `.`                | Show/hide the crosshair (playtest: no effect) |
+| `I`                | Toggle Invulnerability on/off |
+| `T`                | Toggle Super Strength on/off |
+| `L`                | Spawn a loadout around the player |
+| `Ctrl + L`         | Save the current loadout to the default game save slot  (playtest only) |
+| `+`                | Increase the current level of enemies  (playtest: no effect) |
+| `-`                | Decrease the current level of enemies  (playtest: no effect) |
+| `F1`               | Spawn selected Armor |
+| `F2`               | Spawn selected Weapon |
+| `F3`               | Spawn selected NPC (playtest: unarmed Willie NPC only) |
+| `F4`               | Spawn selected Object (playtest: training dummy only) |
+| `F5`               | Undo last spawn (can be repeated) |
+| `F6`               | Despawn all NPCs |
+| `B`                | Spawn the Boss Arena fence around the player's location (only the fence) (playtest: no effect)|
+| `K`                | Kill all NPCs currently on the map |
+| `Z`                | Freeze or unfreeze all NPCs currently on the map |
+| `M`                | Toggle Slow Motion mode |
+| `[`                | Decrease game speed for Slow Motion |
+| `]`                | Increase game speed for Slow Motion |
+| NumPad 5           | Jump (at your own risk) |
+| Mouse Wheel Click  | Shoot projectile |
+| `Tab`              | Change projectile to the next one |
+| `Shift + Tab`      | Change projectile to the previous one |
+| `Ctrl + End`       | Possess the NPC closest to player |
+| `Ctrl + Home`      | Possess the original player character |
+| NumPad 4/6/8/2     | Dash Left/Right/Forward/Backward |
+| `*` on NumPad      | Pause/Unpause the game. Use that in Photo Mode to have free cam in battle |
+| `+` on NumPad      | Switch player team to the next one |
+| `-` on NumPad      | Switch player team to the previous one |
+| `Delete`           | Despawn the object in the center of screen (first person view is better) |
+| `Ctrl + F`         | Command all NPCs in the same team as player to go to the player location |
+
 # How does the mod look on screen
 
 ![Alt text](images/hud_playtest_v0.10_2K.jpg?raw=true "Screenshot of mod UI v0.10")

@@ -1,5 +1,5 @@
 # Trainer Mod for Half Sword Playtest
-This is an experimental version of the trainer mod for Half Sword Playtest only.
+This is an experimental version of the trainer mod for Half Sword Demo v0.4 (April 2025) and Playtest (but Playtest has been removed from Steam).
 
 For the Nov 2023 demo v0.3 use the [regular trainer mod](https://github.com/massclown/HalfSwordTrainerMod).
 
@@ -15,7 +15,14 @@ The documentation for the installer is here: https://github.com/massclown/HalfSw
 # How to install (hard)
 Follow the steps at https://github.com/massclown/HalfSwordTrainerMod?tab=readme-ov-file#installation-hard-mode, 
 but make sure to do the following changes to that procedure:
-1) find the game installation folder of the playtest version of the game, not the demo, obviously.
+1) find the game installation folder of the Demo v0.4 or the Playtest version of the game, not the demo, obviously.
+
+* The Half Sword Demo v0.4 is usually installed somewhere like: 
+`C:\Program Files (x86)\Steam\steamapps\common\Half Sword Demo\`, and if that is the case for you, then:
+  * the UE4SS archive will need to be unzipped into:
+`C:\Program Files (x86)\Steam\steamapps\common\Half Sword Demo\HalfSwordUE5\Binaries\Win64`
+  * and the mod's release will need to be unzipped into: 
+`C:\Program Files (x86)\Steam\steamapps\common\Half Sword Demo\HalfSwordUE5\Binaries\Win64\use4ss\Mods`
 
 * The Half Sword Playtest is usually installed somewhere like: 
 `C:\Program Files (x86)\Steam\steamapps\common\Half Sword Playtest\`, and if that is the case for you, then:
@@ -42,20 +49,20 @@ https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1
 | `U`                | Show/hide the UI (HUD) of the mod |
 | `Alt + U`          | Skip the death screen (only when dead) |
 | `Ctrl + J`         | Try to resurrect the player (only when dead) |
-| `.`                | Show/hide the crosshair (playtest: no effect) |
+| `.`                | Show/hide the crosshair (playtest/Demo v0.4: no effect) |
 | `I`                | Toggle Invulnerability on/off |
 | `T`                | Toggle Super Strength on/off |
 | `L`                | Spawn a loadout around the player |
 | `Ctrl + L`         | Save the current loadout to the default game save slot  (playtest only) |
-| `+`                | Increase the current level of enemies  (playtest: no effect) |
-| `-`                | Decrease the current level of enemies  (playtest: no effect) |
+| `+`                | Increase the current level of enemies  (playtest/Demo v0.4: no effect) |
+| `-`                | Decrease the current level of enemies  (playtest/Demo v0.4: no effect) |
 | `F1`               | Spawn selected Armor |
 | `F2`               | Spawn selected Weapon |
-| `F3`               | Spawn selected NPC (playtest: unarmed Willie NPC only) |
-| `F4`               | Spawn selected Object (playtest: training dummy only) |
+| `F3`               | Spawn selected NPC (playtest/Demo v0.4: unarmed Willie NPC only) |
+| `F4`               | Spawn selected Object (playtest/Demo v0.4: training dummy only) |
 | `F5`               | Undo last spawn (can be repeated) |
 | `F6`               | Despawn all NPCs |
-| `B`                | Spawn the Boss Arena fence around the player's location (only the fence) (playtest: no effect)|
+| `B`                | Spawn the Boss Arena fence around the player's location (only the fence) (playtest/Demo v0.4: no effect)|
 | `K`                | Kill all NPCs currently on the map |
 | `Z`                | Freeze or unfreeze all NPCs currently on the map |
 | `M`                | Toggle Slow Motion mode |
@@ -140,6 +147,7 @@ If the keybinds file doesn't exist, the mod will use the default values listed i
 * `Ctrl + L` saves the current loadout to the game's standard loadout slot (I believe you have to be in a class above unarmed for that to be loaded afterwards)
 * Player team changes and NPC team changes are somewhat broken. 
   * You can get your NPC teammates to attack you by changing your team, but they will keep attacking you if you change it back, etc.
+* In Demo v0.4, switching to Abyss mode will crash the mod (the game may still work, just Alt-tab back to it and ignore the crash message without clicking OK on it)
 
 # License
 Distributed under the MIT License. See LICENSE file for more information.

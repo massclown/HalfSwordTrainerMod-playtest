@@ -2,4 +2,14 @@
 /Game/Character/Blueprints/AI_BP.AI_BP_C
 /Game/Character/Blueprints/Willie_BP.Willie_BP_C
 /Game/Character/Blueprints/Willie_BP_NoBrain.Willie_BP_NoBrain_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_Master.Willie_BP_Boss_Master_C
 /Game/Character/Blueprints/Willie_BP_DressUp.Willie_BP_DressUp_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_9_BARON.Willie_BP_Boss_9_BARON_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_8.Willie_BP_Boss_8_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_7.Willie_BP_Boss_7_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_6.Willie_BP_Boss_6_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_5.Willie_BP_Boss_5_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_4.Willie_BP_Boss_4_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_3.Willie_BP_Boss_3_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_2.Willie_BP_Boss_2_C
+/Game/Character/Blueprints/Unique/Bosses/Willie_BP_Boss_1.Willie_BP_Boss_1_C

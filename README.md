@@ -1,5 +1,5 @@
 # Trainer Mod for Half Sword Playtest
-This is an experimental version of the trainer mod for Half Sword Demo v0.4 (April 2025) and Playtest (but Playtest has been removed from Steam).
+This is an experimental version of the trainer mod for Half Sword Demo v0.5 (April 2025) and Playtest (but Playtest has been removed from Steam).
 
 For the Nov 2023 demo v0.3 use the [regular trainer mod](https://github.com/massclown/HalfSwordTrainerMod).
 

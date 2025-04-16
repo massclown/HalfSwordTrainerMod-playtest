@@ -1,9 +1,9 @@
--- Half Sword Trainer Mod v0.12 by massclown for Half Sword Playtest only
+-- Half Sword Trainer Mod v0.14 by massclown for Half Sword Playtest only
 -- https://github.com/massclown/HalfSwordTrainerMod-playtest
 -- Requirements: LATEST EXPERIMENTAL UE4SS build from github after November 2024, e.g.
 -- https://github.com/UE4SS-RE/RE-UE4SS/releases/download/experimental/UE4SS_v3.0.1-234-g4fc8691.zip
 ------------------------------------------------------------------------------
-local mod_version = "0.12"
+local mod_version = "0.14"
 ------------------------------------------------------------------------------
 local maf = require 'maf'
 local UEHelpers = require("UEHelpers")
@@ -78,53 +78,53 @@ local default_keybinds = {
     -- modifiers: "CONTROL", "SHIFT", "ALT"
     -- for multiple modifiers, use array, e.g. {"CONTROL", "SHIFT"}
     -- for no modifiers, use empty array, e.g. {}
-    -- 
-    toggle_invulnerability = {"I", {}},
-    toggle_superstrength = {"T", {}},
-    save_loadout = {"L", {"CONTROL"}},
-    spawn_loadout = {"L", {}},
-    decrease_level = {"OEM_MINUS", {}}, 
-    increase_level = {"OEM_PLUS", {}},
-    toggle_ui = {"U", {}},
-    spawn_armor = {"F1", {}},
-    spawn_weapon = {"F2", {}},
-    spawn_npc = {"F3", {}},
-    spawn_object = {"F4", {}},
-    undo_spawn = {"F5", {}},
-    despawn_npcs = {"F6", {}},
-    kill_npcs = {"K", {}},
-    toggle_freeze = {"Z", {}},
-    spawn_arena = {"B", {}},
-    toggle_slowmo = {"M", {}},
-    toggle_slowmo_sprint = {"M", {"SHIFT"}},
-    decrease_speed = {"OEM_FOUR", {}},
-    increase_speed = {"OEM_SIX", {}},
-    decrease_speed_sprint = {"OEM_FOUR", {"SHIFT"}},
-    increase_speed_sprint = {"OEM_SIX", {"SHIFT"}},
-    toggle_crosshair = {"OEM_PERIOD", {}},
-    jump = {"NUM_FIVE", {}},
-    jump_sprint = {"NUM_FIVE", {"SHIFT"}},
-    jump_crouch = {"NUM_FIVE", {"CONTROL"}},
-    shoot = {"MIDDLE_MOUSE_BUTTON", {}},
-    shoot_crouch = {"MIDDLE_MOUSE_BUTTON", {"CONTROL"}},
-    shoot_sprint = {"MIDDLE_MOUSE_BUTTON", {"SHIFT"}},
-    remove_armor = {"J", {}},
-    next_projectile = {"TAB", {}},
-    prev_projectile = {"TAB", {"SHIFT"}},
-    remove_death_screen = {"U", {"ALT"}},
-    resurrect = {"J", {"CONTROL"}},
-    possess_npc = {"END", {"CONTROL"}},
-    repossess_player = {"HOME", {"CONTROL"}},
-    dash_forward = {"NUM_EIGHT", {}},
-    dash_back = {"NUM_TWO", {}},
-    dash_left = {"NUM_FOUR", {}}, 
-    dash_right = {"NUM_SIX", {}},
-    toggle_pause = {"MULTIPLY", {}},
-    team_up = {"ADD", {}},
-    team_down = {"SUBTRACT", {}},
-    goto_me = {"F", {"CONTROL"}},
-    despawn_target = {"DEL", {}},
-    scale_target = {"DECIMAL", {}}
+    --
+    toggle_invulnerability = { "I", {} },
+    toggle_superstrength = { "T", {} },
+    save_loadout = { "L", { "CONTROL" } },
+    spawn_loadout = { "L", {} },
+    decrease_level = { "OEM_MINUS", {} },
+    increase_level = { "OEM_PLUS", {} },
+    toggle_ui = { "U", {} },
+    spawn_armor = { "F1", {} },
+    spawn_weapon = { "F2", {} },
+    spawn_npc = { "F3", {} },
+    spawn_object = { "F4", {} },
+    undo_spawn = { "F5", {} },
+    despawn_npcs = { "F6", {} },
+    kill_npcs = { "K", {} },
+    toggle_freeze = { "Z", {} },
+    spawn_arena = { "B", {} },
+    toggle_slowmo = { "M", {} },
+    toggle_slowmo_sprint = { "M", { "SHIFT" } },
+    decrease_speed = { "OEM_FOUR", {} },
+    increase_speed = { "OEM_SIX", {} },
+    decrease_speed_sprint = { "OEM_FOUR", { "SHIFT" } },
+    increase_speed_sprint = { "OEM_SIX", { "SHIFT" } },
+    toggle_crosshair = { "OEM_PERIOD", {} },
+    jump = { "NUM_FIVE", {} },
+    jump_sprint = { "NUM_FIVE", { "SHIFT" } },
+    jump_crouch = { "NUM_FIVE", { "CONTROL" } },
+    shoot = { "MIDDLE_MOUSE_BUTTON", {} },
+    shoot_crouch = { "MIDDLE_MOUSE_BUTTON", { "CONTROL" } },
+    shoot_sprint = { "MIDDLE_MOUSE_BUTTON", { "SHIFT" } },
+    remove_armor = { "J", {} },
+    next_projectile = { "TAB", {} },
+    prev_projectile = { "TAB", { "SHIFT" } },
+    remove_death_screen = { "U", { "ALT" } },
+    resurrect = { "J", { "CONTROL" } },
+    possess_npc = { "END", { "CONTROL" } },
+    repossess_player = { "HOME", { "CONTROL" } },
+    dash_forward = { "NUM_EIGHT", {} },
+    dash_back = { "NUM_TWO", {} },
+    dash_left = { "NUM_FOUR", {} },
+    dash_right = { "NUM_SIX", {} },
+    toggle_pause = { "MULTIPLY", {} },
+    team_up = { "ADD", {} },
+    team_down = { "SUBTRACT", {} },
+    goto_me = { "F", { "CONTROL" } },
+    despawn_target = { "DEL", {} },
+    scale_target = { "DECIMAL", {} }
 }
 ------------------------------------------------------------------------------
 function LoadKeybinds()
@@ -148,19 +148,19 @@ function LoadKeybinds()
                 for part in binding:gmatch("[^,]+") do
                     parts[#parts + 1] = part:match("^%s*(.-)%s*$") -- Trim whitespace
                 end
-                
+
                 if #parts > 0 then
                     local key = parts[1]
                     local modifiers = {}
-                    for i=2, #parts do
+                    for i = 2, #parts do
                         modifiers[#modifiers + 1] = parts[i]
                     end
-                    keybinds[action] = {key, modifiers}
+                    keybinds[action] = { key, modifiers }
                 end
             end
         end
     end
-    
+
     file:close()
 
     -- Fill in any missing bindings with defaults
@@ -421,12 +421,20 @@ function rot2mafrotator(vector)
     return maf.quat(X, Y, Z, W)
 end
 
+function LogQuat(quat)
+    Logf("{X=%f, Y=%f, Z=%f, W=%f}\n", quat.x, quat.y, quat.z, quat.w)
+end
+
 function LogMafVec(mafVector)
     Logf("{X=%f, Y=%f, Z=%f}\n", mafVector.x, mafVector.y, mafVector.z)
 end
 
 function LogUEVec(UEVec)
     Logf("{X=%f, Y=%f, Z=%f}\n", UEVec.X, UEVec.Y, UEVec.Z)
+end
+
+function LogUERot(UERot)
+    Logf("{Pitch=%f, Yaw=%f, Roll=%f}\n", UERot.Pitch, UERot.Yaw, UERot.Roll)
 end
 
 function UEVecToStr(UEVec)
@@ -438,14 +446,44 @@ function MafVecToStr(mafVector)
 end
 
 ------------------------------------------------------------------------------
+local mapNameGauntlet = "Arena_Cutting_Map_C"
+local mapNameAbyss = "Abyss_Map_Open_Intermediate_C"
+local mapPlayerNameGauntlet = "Player (Temp)"
+local mapPlayerNameAbyss = "Player Willie"
+------------------------------------------------------------------------------
 -- The caching code logic is taken from TheLich at nexusmods (Grounded QoL mod)
 local cache = {}
+cache.map_name = mapNameGauntlet
+cache.map_player_name = mapPlayerNameGauntlet
+-- Abyss version of Demo v0.5 and newer has some logic to detect the current game mode
+cache.getCurrentMap = function()
+    local map_playtest = FindFirstOf(mapNameGauntlet)
+    local map_abyss = FindFirstOf(mapNameAbyss)
+    -- TODO detect the menu and bail out
+    if map_playtest and map_playtest:IsValid() then
+        Log("cache.getCurrentMap() found playtest map\n")
+        cache.map_name = mapNameGauntlet
+        cache.map_player_name = mapPlayerNameGauntlet
+        return map_playtest
+    end
+    if map_abyss and map_abyss:IsValid() then
+        Log("cache.getCurrentMap() found abyss map\n")
+        cache.map_name = mapNameAbyss
+        cache.map_player_name = mapPlayerNameAbyss
+        return map_abyss
+    end
+    Logf("cache.getCurrentMap() failed to find map object\n")
+    return nil
+end
+cache.getMapName = function()
+    return cache.map_name
+end
 cache.objects = {}
 cache.names = {
     --    ["engine"] = { "Engine", false },
     --    ["kismet"] = { "/Script/Engine.Default__KismetSystemLibrary", true },
-    --["map"] = { "Abyss_Map_Open_C", false },
-    ["map"] = { "Arena_Cutting_Map_C", false },
+    --
+    ["map"] = { cache.getMapName, false },
     ["worldsettings"] = { "WorldSettings", false },
     --    ["ui_hud"] = { "HSTM_UI_HUD_Widget_C", false },
     --    ["ui_spawn"] = { "HSTM_UI_Spawn_Widget_C", false },
@@ -456,7 +494,13 @@ cache.mt = {}
 cache.mt.__index = function(obj, key)
     local newObj = obj.objects[key]
     if newObj == nil or not newObj:IsValid() then
-        local className, isStatic = table.unpack(obj.names[key])
+        local classNameHandle, isStatic = table.unpack(obj.names[key])
+        local className
+        if type(classNameHandle) == "function" then
+            className = classNameHandle()
+        else
+            className = classNameHandle
+        end
         if isStatic then
             newObj = StaticFindObject(className)
         else
@@ -480,7 +524,8 @@ end
 ------------------------------------------------------------------------------
 -- The function attempts to access all cached objects and call their IsValid() method
 function ValidateCachedObjects()
-    local map = cache.map
+    -- This has a side effect of detecting current game mode and pointing the cache to the map
+    local map = cache.getCurrentMap()
     -- disabled for playtest
     -- local ui_hud = cache.ui_hud
     -- local ui_spawn = cache.ui_spawn
@@ -493,6 +538,16 @@ function ValidateCachedObjects()
         ErrLogf("Map not found! (%s)\n", not map and "nil" or "invalid")
         return false
     end
+
+    local player = cache.map[cache.map_player_name]
+
+    if not player or not player:IsValid() then
+        ErrLogf("Player not found! (%s)\n", not player and "nil" or "invalid")
+        return false
+    end
+
+    -- Logf("Map [%s] found, player [%s]\n", map:GetFullName(), player:GetFullName())
+
     -- if not ui_hud or not ui_hud:IsValid() then
     --     ErrLogf("UI HUD Widget not found! (%s)\n", not map and "nil" or "invalid")
     --     return false
@@ -507,7 +562,7 @@ function ValidateCachedObjects()
     --     return false
     -- end
     if not worldsettings or not worldsettings:IsValid() then
-        ErrLogf("UE WorldSettings not found! (%s)\n", not map and "nil" or "invalid")
+        ErrLogf("UE WorldSettings not found! (%s)\n", not worldsettings and "nil" or "invalid")
         return false
     end
     return true
@@ -539,8 +594,7 @@ function myGetPlayerController()
         -- TODO: not sure if this is fatal or not at the moment. Error handling needs improvement
         -- error("No PlayerController found\n")
         Log("[WARNING] Returning default PlayerController from the map\n")
-        --        local player = cache.map['Player Willie']
-        local player = cache.map['Player (Temp)']
+        local player = cache.map[cache.map_player_name]
         if player and player:IsValid() then
             return player['Controller']
         else
@@ -550,15 +604,56 @@ function myGetPlayerController()
 end
 
 ------------------------------------------------------------------------------
+function IsMainMenuOnScreen()
+    -- WidgetBlueprintGeneratedClass /Game/UI/UI_MainMenuSNF.UI_MainMenuSNF_C
+    local menus = FindAllOf("UI_MainMenuSNF_C")
+    if menus and #menus > 0 then
+--        Logf("Main menu found [%d]\n", #menus)
+        for i = 1, #menus do
+            local menu = menus[i]
+            if menu and menu:IsValid() then
+--                Logf("Main menu found [%s]\n", menu:GetFullName())
+                local isMenuInViewport = menu:IsInViewport()
+                if isMenuInViewport then
+                    Log("Main menu is in viewport\n")
+                    return true
+                else
+                end
+            end
+        end
+        Log("Main menu is not in viewport\n")
+        return false
+    end
+    Log("Main menu not found\n")
+    return false
+end
+
+------------------------------------------------------------------------------
+local delayInProgress = false
+-- This function gets added to the game restart hook below.
+-- Somehow the hook gets triggered multiple times, two or three times per restart (different in Abyss and Gauntlet modes)
+-- As these 2 or 3 calls happen in a few milliseconds, we just delay the initialization of the mod by 1 second and ignore repeated calls
+function DelayInitMod()
+    if InitGameStateHookCount > 1 then
+        if delayInProgress then
+            return
+        end
+        delayInProgress = true
+        ExecuteWithDelay(1000, function()
+            Log("DelayInitMod() async delay complete, initializing the mod\n")
+            InitMyMod()
+            delayInProgress = false
+        end)
+    end
+end
+
+------------------------------------------------------------------------------
 -- Timestamp of last invocation of InitMyMod()
 local lastInitTimestamp = -1
 local globalRestartCount = 0
--- This function gets added to the game restart hook below.
--- Somehow the hook gets triggered twice, so we try to have a time lock to avoid double-calling the init function,
--- but we still have to call it once if the user restarts soon, hence the mininum timeout of that 1 second.
--- So don't restart faster than once every two seconds, or this will break too.
 function InitMyMod()
     -- If the restart is triggered by a resurrection, exit
+    -- TODO check this for playtest/demo v0.5
     if ResurrectionWasRequested then
         ResurrectionWasRequested = false
         return
@@ -567,22 +662,24 @@ function InitMyMod()
     local curInitTimestamp = os.clock()
     local delta = curInitTimestamp - lastInitTimestamp
     if lastInitTimestamp == -1 or (delta > 1) then
-        if InitGameStateHookCount > 1 then
-            -- Looks like a real game start attempt!
-            HSTM_UI_ALT_HUD = nil
-            TempSetupCustomHUD()
-        end
         globalRestartCount = globalRestartCount + 1
         Log("Client Restart hook triggered\n")
 
         if InitGameStateHookCount > 1 then
-            -- Looks like a real game start attempt!
             ClearCachedObjects()
+            if IsMainMenuOnScreen() then
+                Log("InitMyMod() skipped, main menu is on screen\n")
+                return
+            end
 
             if not ValidateCachedObjects() then
                 ErrLog("Objects not found, exiting\n")
                 return
             end
+
+            -- Looks like a real game start attempt!
+            HSTM_UI_ALT_HUD = nil
+            TempSetupCustomHUD()
 
             -- -- We retrieve the version variable from the Blueprint just to confirm that we are on the same version
             -- if cache.ui_hud['UI_Version'] then
@@ -605,7 +702,7 @@ function InitMyMod()
 
             PopulateArmorComboBox()
             PopulateWeaponComboBox()
-            --PopulateNPCComboBox()
+            PopulateNPCComboBox()
             PopulateNPCTeamComboBox()
             PopulateObjectComboBox()
 
@@ -682,7 +779,8 @@ function InitMyMod()
                 LoopAsync(250, function()
                     if myRestartCounter ~= globalRestartCount then
                         -- This is a loop initiated from a past restart hook, exit it
-                        Logf("Exiting HUD update loop leftover from restart #%d, we are in restart #%d now\n", myRestartCounter, globalRestartCount)
+                        Logf("Exiting HUD update loop leftover from restart #%d, we are in restart #%d now\n",
+                            myRestartCounter, globalRestartCount)
                         return true
                     end
                     -- if not ValidateCachedObjects() then
@@ -768,8 +866,11 @@ function TempSetupCustomHUD()
         -- comboBoxWeapons["ItemStyle"]["TextColor"] = { R = 1.0, G = 1.0, B = 1.0, A = 1.0 }
         -- comboBoxWeapons["ItemStyle"]["SelectedTextColor"] = { R = 1.0, G = 0.0, B = 0.0, A = 1.0 }
 
-        local cobmboBoxNPCTeam = StaticConstructObject(StaticFindObject("/Script/UMG.ComboBoxString"), verticalBox,
+        local comboBoxNPCTeam = StaticConstructObject(StaticFindObject("/Script/UMG.ComboBoxString"), verticalBox,
             FName("ComboBoxNPCTeam"))
+
+        local comboBoxNPCClass = StaticConstructObject(StaticFindObject("/Script/UMG.ComboBoxString"), verticalBox,
+            FName("ComboBoxNPClass"))
 
         local ArmorLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
             verticalBox, FName("Spawn_Armor_Label"))
@@ -847,20 +948,21 @@ function TempSetupCustomHUD()
         -- Currently accessing MulticastInlineDelegateProperty from Lua is not supported in UE4SS
         -- The best we can do is to have another loop that polls the value of the slider and updates the scale
 
-        LoopAsync(500, function()
-            if myInitGameStateHookCount ~= InitGameStateHookCount then
-                Log("Exiting leftover ScaleSlider update loop\n")
-                return true
-            end
-            if not HSTM_UI_ALT_HUD_Objects["ScaleSlider"] then
-                return true
-            end
-            local value = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
-            WeaponScaleMultiplier = value
-            HSTM_UI_ALT_HUD_Objects["ScaleLabel"]:SetText(FText(string.format("Scale: %.1f ", value)))
-            return false
-        end)
-
+        if ModUIHUDUpdateLoopEnabled then
+            LoopAsync(500, function()
+                if myInitGameStateHookCount ~= InitGameStateHookCount then
+                    Log("Exiting leftover ScaleSlider update loop\n")
+                    return true
+                end
+                if not HSTM_UI_ALT_HUD_Objects["ScaleSlider"] or not HSTM_UI_ALT_HUD_Objects["ScaleLabel"] then
+                    return true
+                end
+                local value = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
+                WeaponScaleMultiplier = value
+                HSTM_UI_ALT_HUD_Objects["ScaleLabel"]:SetText(FText(string.format("Scale: %.1f ", value)))
+                return false
+            end)
+        end
         -- ScaleSlider["OnValueChanged"] = function(value)
         --     WeaponScaleMultiplier = value
         --     ScaleLabel:SetText(FText(string.format("Scale: %.1f ", value)))
@@ -885,14 +987,24 @@ function TempSetupCustomHUD()
         HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"] = comboBoxWeapons
         verticalBox:AddChildToVerticalBox(comboBoxWeapons)
 
+        local NPCSpawnLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
+            verticalBox, FName("Spawn_NPC_Label"))
+        NPCSpawnLabel:SetText(FText("Spawn NPC:"))
+
+        SetSmallerFont(NPCSpawnLabel)
+        verticalBox:AddChildToVerticalBox(NPCSpawnLabel)
+
+        HSTM_UI_ALT_HUD_Objects["ComboBox_NPCClass"] = comboBoxNPCClass
+        verticalBox:AddChildToVerticalBox(comboBoxNPCClass)
+
         local NPCTeamLabel = StaticConstructObject(StaticFindObject("/Script/UMG.TextBlock"),
             verticalBox, FName("NPCTeam_Label"))
         NPCTeamLabel:SetText(FText("NPC Team:"))
         SetSmallerFont(NPCTeamLabel)
         verticalBox:AddChildToVerticalBox(NPCTeamLabel)
 
-        HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"] = cobmboBoxNPCTeam
-        verticalBox:AddChildToVerticalBox(cobmboBoxNPCTeam)
+        HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"] = comboBoxNPCTeam
+        verticalBox:AddChildToVerticalBox(comboBoxNPCTeam)
 
         local SpawnFrozenNPCsHorizontalBox = StaticConstructObject(StaticFindObject("/Script/UMG.HorizontalBox"),
             verticalBox, FName("SpawnFrozenNPCsHorizontalBox"))
@@ -1023,7 +1135,21 @@ end
 -- end
 
 function formatHUDTextBox(boxName, ...)
-    HSTM_UI_ALT_HUD_Objects[boxName]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names[boxName][2]:format(...)))
+    if not HSTM_UI_ALT_HUD_Objects[boxName] or not HSTM_UI_ALT_HUD_Objects[boxName]:IsValid() then
+        ErrLogf("TextBox [%s] not valid, skipping\n", boxName)
+        return
+    end
+    -- This is a horrible hack to handle nil values to default to 0 to avoid string.format() errors
+    local args = { ... }
+    if #args == 0 then
+        args = { 0 }
+    end
+    for i, v in ipairs(args) do
+        if v == nil then
+            args[i] = 0
+        end
+    end
+    HSTM_UI_ALT_HUD_Objects[boxName]:SetText(FText(HSTM_UI_ALT_HUD_TextBox_Names[boxName][2]:format(table.unpack(args))))
 end
 
 ------------------------------------------------------------------------------
@@ -1044,7 +1170,7 @@ function HUD_UpdatePlayerStats_Playtest()
     formatHUDTextBox("TextBox_HP", PlayerHealth)
 
     formatHUDTextBox("TextBox_Invulnerability", tostring(Invulnerable))
-    
+
     formatHUDTextBox("TextBox_SuperStrength", tostring(SuperStrength))
     --
     PlayerScore = cache.map['Score']
@@ -1246,6 +1372,9 @@ function SpawnActorByClassPath(FullClassPath, SpawnLocation, SpawnRotation, Spaw
         ErrLogf("Invalid ClassPath [%s] for actor, cannot spawn!\n", tostring(FullClassPath))
         return
     end
+
+    LoadAsset(FullClassPath)
+
     local DefaultLocation = { X = 100.0, Y = 100.0, Z = 100.0 }
     local CurrentLocation = SpawnLocation == nil and DefaultLocation or SpawnLocation
     local DefaultScaleMultiplier = DefaultScale1x
@@ -1350,8 +1479,7 @@ function GetActivePlayer()
     -- TODO maybe this is not a great idea
     if not FirstPlayerController then
         if cache.map then
-            --            return cache.map['Player Willie']
-            player = cache.map['Player (Temp)']
+            player = cache.map[cache.map_player_name]
             if player:IsValid() then
                 return player
             end
@@ -1679,30 +1807,38 @@ end
 
 function SpawnSelectedArmor()
     -- local Selected_Spawn_Armor = cache.ui_spawn['Selected_Spawn_Armor']:ToString()
-    local Selected_Spawn_Armor = HSTM_UI_ALT_HUD_Objects["ComboBox_Armor"]:GetSelectedOption():ToString()
-    --Logf("Spawning armor key [%s]\n", Selected_Spawn_Armor)
-    --    if not Selected_Spawn_Armor == nil and not Selected_Spawn_Armor == "" then
-    -- local _, selected_actor = table.random_key_value(all_armor)
-    local selected_actor = all_armor[Selected_Spawn_Armor]
+    local selected_actor = nil
+    if HSTM_UI_ALT_HUD_Objects["ComboBox_Armor"] and HSTM_UI_ALT_HUD_Objects["ComboBox_Armor"]:IsValid() then
+        local Selected_Spawn_Armor = HSTM_UI_ALT_HUD_Objects["ComboBox_Armor"]:GetSelectedOption():ToString()
+        --Logf("Spawning armor key [%s]\n", Selected_Spawn_Armor)
+        --    if not Selected_Spawn_Armor == nil and not Selected_Spawn_Armor == "" then
+        selected_actor = all_armor[Selected_Spawn_Armor]
+    else
+        _, selected_actor = table.random_key_value(all_armor)
+    end
     Logf("Spawning armor [%s]\n", selected_actor)
     SpawnActorInFrontOfPlayer(selected_actor)
     --    end
 end
 
 function SpawnSelectedWeapon()
-    -- local Selected_Spawn_Weapon = cache.ui_spawn['Selected_Spawn_Weapon']:ToString()
-    local Selected_Spawn_Weapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
-    -- WeaponScaleMultiplier = cache.ui_spawn['HSTM_Slider_WeaponSize']
-    WeaponScaleMultiplier = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
-    WeaponScaleX = HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"]:IsChecked()
-    WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
-    WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
-    WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
+    local selected_actor = nil
+    if HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"] and HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:IsValid() then
+        local Selected_Spawn_Weapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
+        -- WeaponScaleMultiplier = cache.ui_spawn['HSTM_Slider_WeaponSize']
+        WeaponScaleMultiplier = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
+        WeaponScaleX = HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"]:IsChecked()
+        WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
+        WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
+        WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
 
-    --Logf("Spawning weapon key [%s]\n", Selected_Spawn_Weapon)
-    --    if not Selected_Spawn_Weapon == nil and not Selected_Spawn_Weapon == "" then
-    --local _, selected_actor = table.random_key_value(all_weapons)
-    local selected_actor = all_weapons[Selected_Spawn_Weapon]
+        --Logf("Spawning weapon key [%s]\n", Selected_Spawn_Weapon)
+        --    if not Selected_Spawn_Weapon == nil and not Selected_Spawn_Weapon == "" then
+        --local _, selected_actor = table.random_key_value(all_weapons)
+        selected_actor = all_weapons[Selected_Spawn_Weapon]
+    else
+        _, selected_actor = table.random_key_value(all_weapons)
+    end
     Logf("Spawning weapon [%s]\n", selected_actor)
 
     if WeaponScaleMultiplier ~= 1.0 then
@@ -1722,13 +1858,24 @@ end
 function SpawnSelectedNPC()
     -- -- Update the flag from the Spawn HUD
     -- SpawnFrozenNPCs = cache.ui_spawn['HSTM_Flag_SpawnFrozenNPCs']
-    SpawnFrozenNPCs = HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsChecked()
-    NPCTeam = tonumber(HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString())
+    if HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"] and HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsValid() then
+        SpawnFrozenNPCs = HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsChecked()
+    end
+    if HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"] and HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:IsValid() then
+        NPCTeam = HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString()
+    end
     -- local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
     -- --Logf("Spawning NPC key [%s]\n", Selected_Spawn_NPC)
     -- --    if not Selected_Spawn_NPC == nil and not Selected_Spawn_NPC == "" then
     -- local selected_actor = all_characters[Selected_Spawn_NPC]
-    local selected_actor = "/Game/Character/Blueprints/Willie_BP.Willie_BP_C"
+    local selected_actor = nil
+    if HSTM_UI_ALT_HUD_Objects["ComboBox_NPCClass"] and HSTM_UI_ALT_HUD_Objects["ComboBox_NPCClass"]:IsValid() then
+        local Selected_Spawn_NPC = HSTM_UI_ALT_HUD_Objects["ComboBox_NPCClass"]:GetSelectedOption():ToString()
+        selected_actor = all_characters[Selected_Spawn_NPC]
+    else
+        -- TODO this is a random NPC, not a random class
+        _, selected_actor = table.random_key_value(all_characters)
+    end
     --    local selected_actor = "/Game/Character/Blueprints/Willie_BP_DressUp.Willie_BP_DressUp_C"
     Logf("Spawning NPC [%s]\n", selected_actor)
     SpawnActorInFrontOfPlayer(selected_actor, { X = config.spawn_offset_x_npc, Y = 0.0, Z = 50.0 }, true)
@@ -1824,18 +1971,22 @@ function PopulateWeaponComboBox()
 end
 
 function PopulateNPCComboBox()
-    -- local ComboBox_NPC = cache.ui_spawn['ComboBox_NPC']
-    -- ComboBox_NPC:ClearOptions()
+    local ComboBox_NPC = HSTM_UI_ALT_HUD_Objects["ComboBox_NPCClass"]
+    if ComboBox_NPC and ComboBox_NPC:IsValid() then
+        ComboBox_NPC:ClearOptions()
 
-    local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_characters.txt", "r");
-    for line in file:lines() do
-        if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
-            local fkey = ExtractHumanReadableNameShorter(line)
-            all_characters[fkey] = line
-            -- ComboBox_NPC:AddOption(fkey)
+        local file = io.open("ue4ss\\Mods\\HalfSwordTrainerMod\\data\\all_characters.txt", "r");
+        for line in file:lines() do
+            if not line:starts_with('[BAD]') and not line:match("^%s*#") and not line:match("^%s*$") then
+                local fkey = ExtractHumanReadableNameShorter(line)
+                all_characters[fkey] = line
+                ComboBox_NPC:AddOption(fkey)
+            end
         end
+        ComboBox_NPC:SetSelectedIndex(0)
+    else
+        Log("ComboBox_NPC is not valid\n")
     end
-    -- ComboBox_NPC:SetSelectedIndex(0)
 end
 
 function PopulateNPCTeamComboBox()
@@ -1900,7 +2051,7 @@ end
 function ToggleCrosshair()
     local crosshair = cache.ui_game_hud['Aim']
     if crosshair and crosshair:IsValid() then
-        CrosshairVisible = crosshair:GetVisibility() == 0 and true or false
+        CrosshairVisible = crosshair:GetVisibility() == Visibility_VISIBLE and true or false
         if CrosshairVisible then
             crosshair:SetVisibility(Visibility_HIDDEN)
             CrosshairVisible = false
@@ -2035,7 +2186,12 @@ function PlayerDash(direction)
     -- The liftoff angles for the dash compensate for the ground friction and legs grappling the ground, hopefully
     local liftoffAnglesDeg = { [DASH_FORWARD] = 15.0, [DASH_BACK] = 15.0, [DASH_LEFT] = 30.0, [DASH_RIGHT] = 30.0 }
     -- The dash forces have been tuned to provide a decent movement while not tripping the player (hopefully)
-    local dashForces = { [DASH_FORWARD] = config.dash_forward_impulse, [DASH_BACK] = config.dash_back_impulse, [DASH_LEFT] = config.dash_left_impulse, [DASH_RIGHT] = config.dash_right_impulse }
+    local dashForces = {
+        [DASH_FORWARD] = config.dash_forward_impulse,
+        [DASH_BACK] = config.dash_back_impulse,
+        [DASH_LEFT] = config.dash_left_impulse,
+        [DASH_RIGHT] = config.dash_right_impulse
+    }
 
     local direction_rotator = maf.rotation.fromAngleAxis(
         angles[direction] / 2.0,
@@ -2121,15 +2277,19 @@ function ShootProjectile()
     -- Allow to shoot a weapon from spawn menu, taking into account the scale
     if class == DEFAULT_PROJECTILE then
         -- ScaleObjects = cache.ui_spawn['HSTM_Flag_ScaleObjects']
+        local selected_actor = nil
+        if HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"] then
+            local Selected_Spawn_Weapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
+            WeaponScaleMultiplier = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
+            WeaponScaleX = HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"]:IsChecked()
+            WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
+            WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
+            WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
 
-        local Selected_Spawn_Weapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
-        WeaponScaleMultiplier = HSTM_UI_ALT_HUD_Objects["ScaleSlider"]:GetValue()
-        WeaponScaleX = HSTM_UI_ALT_HUD_Objects["ScaleXCheckBox"]:IsChecked()
-        WeaponScaleY = HSTM_UI_ALT_HUD_Objects["ScaleYCheckBox"]:IsChecked()
-        WeaponScaleZ = HSTM_UI_ALT_HUD_Objects["ScaleZCheckBox"]:IsChecked()
-        WeaponScaleBladeOnly = HSTM_UI_ALT_HUD_Objects["ScaleBladeOnlyCheckBox"]:IsChecked()
-
-        local selected_actor = all_weapons[Selected_Spawn_Weapon]
+            selected_actor = all_weapons[Selected_Spawn_Weapon]
+        else
+            _, selected_actor = table.random_key_value(all_weapons)
+        end
         --Logf("Shooting custom weapon [%s]\n", selected_actor)
 
         -- Try to guess the correct rotation for various weapons
@@ -2148,7 +2308,7 @@ function ShootProjectile()
         elseif selected_actor:contains("CandleStick") then
             -- Currently bugged
             offset.X = offset.X + 100
-            baseRotation = { Pitch = 90.0, Yaw = 0.0, Roll = 0.0 }
+            baseRotation = { Pitch = -90.0, Yaw = 0.0, Roll = 0.0 }
         end
 
         if WeaponScaleMultiplier ~= 1.0 then
@@ -2176,8 +2336,10 @@ function ShootProjectile()
         class = selected_actor
     elseif class == DEFAULT_NPC_PROJECTILE then
         -- TODO fix combobox
-        SpawnFrozenNPCs = HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsChecked()
-        NPCTeam = tonumber(HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString())
+        if HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"] then
+            SpawnFrozenNPCs = HSTM_UI_ALT_HUD_Objects["SpawnFrozenNPCsCheckBox"]:IsChecked()
+            NPCTeam = tonumber(HSTM_UI_ALT_HUD_Objects["ComboBox_NPCTeam"]:GetSelectedOption():ToString())
+        end
         -- TODO fix combobox
         --local Selected_Spawn_NPC = cache.ui_spawn['Selected_Spawn_NPC']:ToString()
         --local selected_actor = all_characters[Selected_Spawn_NPC]
@@ -2218,8 +2380,8 @@ function ShootProjectile()
     -- Rotate the projectile along its yaw and pitch to address horizontal and vertical camera movement
 
     local SpawnRotation = {
-        Pitch = baseRotation.Pitch + PlayerViewRotation.Pitch,
-        Yaw = baseRotation.Yaw + PlayerViewRotation.Yaw,
+        Pitch = math.fmod(baseRotation.Pitch + PlayerViewRotation.Pitch, 360.0),
+        Yaw = math.fmod(baseRotation.Yaw + PlayerViewRotation.Yaw, 360.0),
         Roll = baseRotation.Roll,
     }
 
@@ -2237,7 +2399,7 @@ function ShootProjectile()
     -- Then address the horizonal (Yaw) camera movement around Z-axis as done above for spawn location, same for impulse
     ImpulseRotation:rotate(rotator)
 
-    local projectile = SpawnActorByClassPath(class, SpawnLocation, baseRotation, scale, WeaponScaleBladeOnly,
+    local projectile = SpawnActorByClassPath(class, SpawnLocation, SpawnRotation, scale, WeaponScaleBladeOnly,
         ScaleObjects)
     -- Correct the spawned projectile rotation by the camera-specific angles
     projectile:K2_SetActorRotation(SpawnRotation, true)
@@ -2282,6 +2444,10 @@ function HUD_CacheProjectile()
     local class, _, _, _ = table.unpack(projectiles[selectedProjectile])
     local classname = class
     if class == DEFAULT_PROJECTILE then
+        if not HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"] or not HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:IsValid() then
+            ErrLogf("ComboBox_Weapon is not valid\n")
+            return
+        end
         local selectedWeapon = HSTM_UI_ALT_HUD_Objects["ComboBox_Weapon"]:GetSelectedOption():ToString()
         classname = all_weapons[selectedWeapon]
         -- elseif class == DEFAULT_NPC_PROJECTILE then
@@ -2320,8 +2486,7 @@ end
 ------------------------------------------------------------------------------
 -- TODO this is unused, the idea was to see if the map's player willie is the one we are actually controlling or not
 function IsPossessing()
-    --    local player = cache.map['Player Willie']
-    local player = cache.map['Player (Temp)']
+    local player = cache.map[cache.map_player_name]
     local playerController = myGetPlayerController()
     local possessedPawn = playerController['Pawn']
     return UEAreObjectsEqual(player, possessedPawn)
@@ -2346,8 +2511,7 @@ function PossessNearestNPC()
 
     if OGWillie == nil then
         -- cache the original Willie so that we can go back to it when repossessing
-        --OGWillie = cache.map['Player Willie']
-        OGWillie = cache.map['Player (Temp)']
+        OGWillie = cache.map[cache.map_player_name]
         Logf("OGWillie: %s\n", OGWillie:GetFullName())
     end
 
@@ -2379,8 +2543,7 @@ function PossessNearestNPC()
         -- TODO fix the player X and Y and map's link to the player character
         -- currently we use the stored one to be able to repossess it, but game progression is broken if you keep the new character
         -- we should probably fix it
-        --cache.map['Player Willie'] = pawnToPossess
-        cache.map['Player (Temp)'] = pawnToPossess
+        cache.map[cache.map_player_name] = pawnToPossess
     else
         ErrLogf("Could not find the closest NPC\n")
     end
@@ -2398,8 +2561,7 @@ function RepossessPlayer()
     if OGWillie ~= nil and OGWillie:IsValid() then
         Logf("Possessing player Willie back: %s\n", OGWillie:GetFullName())
         playerController:Possess(OGWillie)
-        --cache.map['Player Willie'] = OGWillie
-        cache.map['Player (Temp)'] = OGWillie
+        cache.map[cache.map_player_name] = OGWillie
         SetAllPlayerOneHUDVisibility(Visibility_VISIBLE)
     else
         Logf("[ERROR]: Cannot repossess the original Willie, aborting.\n")
@@ -2717,6 +2879,7 @@ function ScaleObjectUnderCamera()
         end
     end
 end
+
 ------------------------------------------------------------------------------
 -- Calls the built-in function to save the current loadout on the player
 function SaveLoadout()
@@ -2725,6 +2888,7 @@ function SaveLoadout()
     player['Save Loadout']()
     Logf("Loadout saved.\n")
 end
+
 ------------------------------------------------------------------------------
 -- This function is called when the mod is loaded at the end of this file
 function AllHooks()
@@ -2736,21 +2900,21 @@ end
 ------------------------------------------------------------------------------
 function CriticalHooks()
     ------------------------------------------------------------------------------
-    -- We hook the restart event, which somehow fires twice per restart
+    -- We hook the restart event, which somehow fires 2/3 times per restart
     -- We take care of that in the InitMyMod() function above
-    RegisterHook("/Script/Engine.PlayerController:ClientRestart", InitMyMod)
-    --    RegisterLoadMapPostHook(function(Engine, World)
-    --        InitMyMod()
-    --    end)
-    RegisterLoadMapPostHook(function(Engine, World)
-        Logf("UEngine::LoadMap() triggered with RegisterLoadMapPostHook\n")
-    end)
+    RegisterHook("/Script/Engine.PlayerController:ClientRestart", DelayInitMod)
+    -- RegisterLoadMapPostHook(function(Engine, World)
+    --     Logf("UEngine::LoadMap() triggered with RegisterLoadMapPostHook\n")
+    -- end)
 
     -- This may be a better trigger for mod init than the above ClientRestart hook as the menu is also on a loaded map
+    -- This still gets called two times by the game
     RegisterInitGameStatePostHook(function(Context)
         Logf("AGameModeBase::InitGameState() triggered with RegisterInitGameStatePostHook\n")
         -- We try to find the real game start event amond multiple spurious invocations of ClientRestart hook and this hook
         InitGameStateHookCount = InitGameStateHookCount + 1
+        -- After InitGameStateHookCount == 1, we can reset the ClientRestart counter, so we assume the last timestamp never happened
+        lastInitTimestamp = -1
         --        RegisterHook("/Game/Blueprints/Utility/BP_HalfSwordGameMode.BP_HalfSwordGameMode_C:ReceiveBeginPlay", function()
         --            Logf("/Game/Blueprints/Utility/BP_HalfSwordGameMode.BP_HalfSwordGameMode_C:ReceiveBeginPlay triggered\n")
         --        end)
@@ -2846,6 +3010,7 @@ function RegisterCustomKeyBind(key, modifiers, callback)
         RegisterKeyBind(key, callback)
     end
 end
+
 ------------------------------------------------------------------------------
 -- The user-facing key bindings are below.
 -- Most are wrapped in a ExecuteInGameThread() call to not crash,
@@ -2929,12 +3094,12 @@ function AllKeybindHooks()
             RegisterCustomKeyBind(key, modifiers, function()
                 ExecuteInGameThread(function() ToggleCrosshair() end)
             end)
-        -- Also make sure we can still jump while sprinting with Shift, or crouching with Ctrl held down
+            -- Also make sure we can still jump while sprinting with Shift, or crouching with Ctrl held down
         elseif action == "jump" or action == "jump_sprint" or action == "jump_crouch" then
             RegisterCustomKeyBind(key, modifiers, function()
                 ExecuteInGameThread(function() PlayerJump() end)
             end)
-        -- Also make sure we can still shoot while sprinting with Shift or crouching with Ctrl held down
+            -- Also make sure we can still shoot while sprinting with Shift or crouching with Ctrl held down
         elseif action == "shoot" or action == "shoot_sprint" or action == "shoot_crouch" then
             RegisterCustomKeyBind(key, modifiers, function()
                 ExecuteInGameThread(function() ShootProjectile() end)
@@ -3008,7 +3173,6 @@ end
 ------------------------------------------------------------------------------
 -- The logic below attempts to check if the environment is OK to run in
 function SanityCheckAndInit()
-
     LoadConfig()
 
     local UE4SS_Major, UE4SS_Minor, UE4SS_Hotfix = UE4SS.GetVersion()

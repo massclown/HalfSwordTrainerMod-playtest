@@ -608,11 +608,11 @@ function IsMainMenuOnScreen()
     -- WidgetBlueprintGeneratedClass /Game/UI/UI_MainMenuSNF.UI_MainMenuSNF_C
     local menus = FindAllOf("UI_MainMenuSNF_C")
     if menus and #menus > 0 then
---        Logf("Main menu found [%d]\n", #menus)
+        --        Logf("Main menu found [%d]\n", #menus)
         for i = 1, #menus do
             local menu = menus[i]
             if menu and menu:IsValid() then
---                Logf("Main menu found [%s]\n", menu:GetFullName())
+                --                Logf("Main menu found [%s]\n", menu:GetFullName())
                 local isMenuInViewport = menu:IsInViewport()
                 if isMenuInViewport then
                     Log("Main menu is in viewport\n")
@@ -1757,36 +1757,42 @@ end
 -- through the array of things we spawned ourselves.
 -- This is useful to despawn or kill all NPCs, etc.
 function ExecuteForAllNPCs(callback)
-    if cache.map['Enemies'] then
-        local npc = cache.map['Enemies']
-        if npc:GetArrayNum() > 0 then
+    -- gauntlet mode has map:'Enemies'
+    -- abyss mode has map:'Enemy Array'
+
+    local npcArrays = { 'Enemies', 'Enemy Array' }
+    for _, arrayName in ipairs(npcArrays) do
+        local npc = cache.map[arrayName]
+        if npc and npc:IsValid() then
+            if npc:GetArrayNum() > 0 then
+                npc:ForEach(function(Index, Elem)
+                    Logf("Executing for NPC [%i] from [%s]: %s\n", Index - 1, arrayName, Elem:get():GetFullName())
+                    callback(Elem:get())
+                end)
+            end
+        end
+    end
+
+    -- Then process the boss in abyss mode if we are in a boss arena and the boss is alive
+    local bossArena = cache.map['Current Boss Arena']
+    if bossArena and bossArena:IsValid() then
+        if cache.map['Boss Alive'] then
+            local boss = bossArena['Boss']
+            if boss:IsValid() then
+                Logf("Executing for Boss: %s\n", boss:GetFullName())
+                callback(boss)
+            end
+        end
+        local npc = bossArena['Spawned Enemies']
+        if npc and npc:GetArrayNum() > 0 then
             npc:ForEach(function(Index, Elem)
-                --                if Elem:IsValid() then
-                Logf("Executing for NPC [%i]: %s\n", Index - 1, Elem:get():GetFullName())
-                callback(Elem:get())
-                --                end
+                if npc:IsValid() then
+                    Logf("Executing for Boss Spawned NPC [%i]: %s\n", Index - 1, Elem:get():GetFullName())
+                    callback(Elem:get())
+                end
             end)
         end
     end
-    -- -- Then freeze the boss if we are in a boss arena and the boss is alive
-    -- if cache.map['Current Boss Arena'] and cache.map['Current Boss Arena']:IsValid() then
-    --     if cache.map['Boss Alive'] then
-    --         local boss = cache.map['Current Boss Arena']['Boss']
-    --         if boss:IsValid() then
-    --             Logf("Executing for Boss: %s\n", boss:GetFullName())
-    --             callback(boss)
-    --         end
-    --     end
-    --     local npc = cache.map['Current Boss Arena']['Spawned Enemies']
-    --     if npc and npc:GetArrayNum() > 0 then
-    --         npc:ForEach(function(Index, Elem)
-    --             if npc:IsValid() then
-    --                 Logf("Executing for Boss Spawned NPC [%i]: %s\n", Index - 1, Elem:get():GetFullName())
-    --                 callback(Elem:get())
-    --             end
-    --         end)
-    --     end
-    -- end
     if spawned_things then
         for i = #spawned_things, 1, -1 do
             local actorToProcessRecord = spawned_things[i]
@@ -2297,7 +2303,7 @@ function ShootProjectile()
             baseRotation = { Pitch = 0.0, Yaw = 180.0, Roll = 0.0 }
         elseif selected_actor:contains("Scythe") then
             baseRotation = { Pitch = 90.0, Yaw = 0.0, Roll = 0.0 }
-            offset.X = offset.X + 120
+            offset.X = offset.X + 130
         elseif selected_actor:contains("Pitchfork") then
             offset.X = offset.X + 20
         elseif selected_actor:contains("Sickle") then

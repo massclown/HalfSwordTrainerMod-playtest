@@ -94,5 +94,5 @@
 /Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Sickle_D.BP_Weapon_Tool_Sickle_D_C
 /Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Sickle_E.BP_Weapon_Tool_Sickle_E_C
 /Game/Assets/Weapons/Blueprints/Built_Weapons/Tools/BP_Weapon_Tool_Tongs.BP_Weapon_Tool_Tongs_C
-/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Feet.Weapon_Feet_C
-/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Fists.Weapon_Fists_C
+[BAD]/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Feet.Weapon_Feet_C
+[BAD]/Game/Assets/Weapons/Blueprints/Built_Weapons/Weapon_Fists.Weapon_Fists_C
